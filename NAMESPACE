@@ -1,0 +1,2 @@
+useDynLib(RcppProgress)
+#exportPattern("^[[:alpha:]]+")
