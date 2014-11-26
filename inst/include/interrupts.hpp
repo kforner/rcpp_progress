@@ -17,7 +17,7 @@
 #ifndef _RcppProgress_INTERRUPTS_HPP
 #define _RcppProgress_INTERRUPTS_HPP
 
-#include <R.h>
+#include <Rinternals.h>
 
 
 static void chkIntFn(void *dummy) {

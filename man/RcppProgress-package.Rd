@@ -83,16 +83,17 @@ when after the computation, we increment the progress monitor.
 Then let us look at the computation function (that is completely useless) :
 
 \preformatted{
-void long_computation(int nb) \{
+double long_computation(int nb) \{
     double sum = 0;
     for (int i = 0; i < nb; ++i) \{
       if ( Progress::check_abort() ) // check for user abort
-        return;
+        return -1;
       for (int j = 0; j < nb; ++j) \{
         sum += Rf_dlnorm(i+j, 0.0, 1.0, 0);
       \}
     \}
   \}
+  return sum;
 \}
 }
 
@@ -108,7 +109,7 @@ As a rule of thumb it should be called roughly evevry second.
 
 \subsection{Using RcppProgress in your package}{
 
-Please note that we provide the \bold{RcppProgressExample} example package along with this package, 
+Please note that we provide the \bold{RcppProgressExample} example package along with this package,
 	located in the \code{examples} directory of the installed package.
 
 Here are the steps to use RcppProgress in a new package:
@@ -120,10 +121,10 @@ create a package skeleton using Rcpp
 \preformatted{
 
 library(Rcpp)
-Rcpp.package.skeleton( "RcppProgressExample" )}
+Rcpp.package.skeleton("RcppProgressExample")}
 }
 
-\item{ DESCRIPTION }{ edit the \bold{DESCRIPTION} file  and add RcppProgress to 
+\item{ DESCRIPTION }{ edit the \bold{DESCRIPTION} file  and add RcppProgress to
 the \strong{Depends:} and \strong{LinkingTo:} lines. e.g.
 \preformatted{
 Depends: Rcpp (>= 0.9.4), RcppProgress (>= 0.1)
@@ -142,7 +143,7 @@ PKG_CXXFLAGS +=-Ilibsrc $(SHLIB_OPENMP_CXXFLAGS) `$(R_HOME)/bin/Rscript -e "Rcpp
 
 \item{ c++ code }{
 Put your code in \bold{src}.
-You may for instance copy the RcppExample/src/tests.cpp file in \bold{src}, and  RcppExample/R/tests.R in
+You may for instance copy the RcppProgressExample/src/tests.cpp file in \bold{src}, and  RcppProgressExample/R/tests.R in
 \bold{R}, and try to
 compile the package (\code{R CMD INSTALL -l test .}) and execute the tests:
 
@@ -155,6 +156,20 @@ compile the package (\code{R CMD INSTALL -l test .}) and execute the tests:
 
 }
 } % subsection
+
+
+\subsection{Using RcppProgress with RcppArmadillo}{
+We also provide the \bold{RcppProgressArmadillo} example package along with this package,
+located in the \code{examples} directory of the installed package.
+
+The peculiarity is that you have to include the RcppArmadillo.h header before the
+progress.hpp RcppProgress header, and add the RcppArmadillo in the LinkingTo:
+field of the package DESCRIPTION file.
+
+
+}  % subsection
+
+
 } % details
 
 

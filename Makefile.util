@@ -1,0 +1,3 @@
+clean:
+	rm -f  src/*.o src/*.so */*~ *~
+	$(shell bash -c "shopt -s globstar && rm -f **/*.o **/*.so")

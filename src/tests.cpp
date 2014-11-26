@@ -1,9 +1,6 @@
 #include "progress.hpp"
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
+#include <Rcpp.h>
+using namespace Rcpp;
 #include <Rmath.h>
 
 // this an example of code for which to provide support for user interruption

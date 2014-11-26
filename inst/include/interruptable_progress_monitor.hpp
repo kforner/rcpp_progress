@@ -12,14 +12,14 @@
 #ifndef _RcppProgress_INTERRUPTABLE_PROGRESS_MONITOR_HPP
 #define _RcppProgress_INTERRUPTABLE_PROGRESS_MONITOR_HPP
 
-#include <Rcpp.h>
+
 #include "interrupts.hpp"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-using namespace Rcpp;
+//using namespace Rcpp;
 
 class InterruptableProgressMonitor {
 public: // ====== LIFECYCLE =====
