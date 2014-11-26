@@ -1,7 +1,8 @@
 R=R
 
 clean:
-	rm -f  src/*.o src/*.so */*~ *~
+	rm -f  src/*.o src/*.so */*~ *~ src/*.rds
+	rm -rf RcppProgress.Rcheck/
 	$(shell bash -c "shopt -s globstar && rm -f **/*.o **/*.so")
 
 install:

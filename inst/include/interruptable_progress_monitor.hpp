@@ -19,6 +19,9 @@
 #include <omp.h>
 #endif
 
+#include <R_ext/Print.h>
+#include <Rinterface.h>
+
 //using namespace Rcpp;
 
 class InterruptableProgressMonitor {
@@ -179,6 +182,7 @@ public: // ===== methods related to DISPLAY, should not be called directly =====
 			_display_ticks(remaining);
 		}
 		REprintf("|\n");
+		R_FlushConsole();
 	}
 
 	void display_progress_bar() {
@@ -186,6 +190,7 @@ public: // ===== methods related to DISPLAY, should not be called directly =====
 			return;
 		REprintf("0%   10   20   30   40   50   60   70   80   90   100%\n");
 		REprintf("|----|----|----|----|----|----|----|----|----|----|\n");
+		R_FlushConsole();
 	}
 
 protected: // ==== other instance methods =====
@@ -195,8 +200,10 @@ protected: // ==== other instance methods =====
 	}
 
 	void _display_ticks(int nb) {
-		for (int i = 0; i < nb; ++i)
+		for (int i = 0; i < nb; ++i) {
 			REprintf("*");
+			R_FlushConsole();
+		}
 	}
 
 	/**
