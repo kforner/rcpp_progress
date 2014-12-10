@@ -25,7 +25,7 @@ static void chkIntFn(void *dummy) {
 }
 
 // this will call the above in a top-level context so it won't longjmp-out of your context
-bool checkInterrupt() {
+inline bool checkInterrupt() {
 	return (R_ToplevelExec(chkIntFn, NULL) == FALSE);
 }
 
