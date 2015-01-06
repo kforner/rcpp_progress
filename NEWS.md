@@ -1,5 +1,8 @@
-# RcppProgress 0.2.1
+# RcppProgress 0.3
 
+* improvement by Jacques-Henri Jourdan to make it possible to use the progress monitor in multiple cpp files.
+
+# RcppProgress 0.2.1
 
 * fixed compatibility problems with RcppArmadillo header.
 
