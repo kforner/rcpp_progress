@@ -22,8 +22,6 @@
 #include <R_ext/Print.h>
 #include <Rinterface.h>
 
-//using namespace Rcpp;
-
 class InterruptableProgressMonitor {
 public: // ====== LIFECYCLE =====
 

@@ -29,4 +29,6 @@ inline bool checkInterrupt() {
 	return (R_ToplevelExec(chkIntFn, NULL) == FALSE);
 }
 
+// fix a bug because of the length macro (in sglOptim_1.0.122.1)
+#undef length
 #endif

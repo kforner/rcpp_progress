@@ -14,6 +14,10 @@
 
 #include <R_ext/Error.h>
 
+// I must keep this because now some depedent packages rely on Rcpp namespace to be available
+#include <Rcpp.h>
+using namespace Rcpp;
+
 class Progress {
 public:
 	/**

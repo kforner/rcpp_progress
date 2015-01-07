@@ -1,6 +1,9 @@
 NEWS.md
 Makefile
 ^test.*\.R$
+\.tar.gz$
+docker_checker
+
 
 
 
