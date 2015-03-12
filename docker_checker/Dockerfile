@@ -4,7 +4,7 @@ MAINTAINER karl.forner@quartzbio.com
 
 RUN  Rscript -e 'install.packages("Rcpp")'
 
-RUN apt-get install -y libcurl4-openssl-dev sudo nano
+RUN apt-get update && apt-get install -y libcurl4-openssl-dev sudo nano
 
 RUN  Rscript -e 'install.packages("devtools")'
 RUN  Rscript -e 'install.packages("bit")'
