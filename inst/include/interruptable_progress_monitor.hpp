@@ -14,13 +14,11 @@
 
 
 #include "interrupts.hpp"
+#include "progress_bar.hpp"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
-#include <R_ext/Print.h>
-#include <Rinterface.h>
 
 class InterruptableProgressMonitor {
 public: // ====== LIFECYCLE =====
@@ -33,10 +31,12 @@ public: // ====== LIFECYCLE =====
 	 */
 	InterruptableProgressMonitor(unsigned long max = 1,  bool display_progress = true)  {
 		reset(max, display_progress);
-		display_progress_bar();
+		if (is_display_on()) _progress_bar.display_progress_bar();
 	}
 
-	~InterruptableProgressMonitor() { }
+	~InterruptableProgressMonitor() {
+		if (is_display_on() && !is_aborted()) _progress_bar.end_display();
+	}
 
 public: // ===== ACCESSORS/SETTERS =====
 	void set_display_status(bool on) { _display_progress = on; 	}
@@ -90,7 +90,6 @@ public: // ===== PBLIC MAIN INTERFACE =====
 
 		if ( is_master() )  {
 			check_user_interrupt_master();
-//			update_display();
 		}
 		return is_aborted();
 	}
@@ -127,17 +126,13 @@ public: // ===== methods for MASTER thread =====
 	 * @return false iff the computation is aborted
 	 */
 	bool update_master(unsigned long current) {
-		// try to make it as fast as possible
-//		unsigned long last = _current;
 		_current = current;
-//		if ( (current - last)*100 > _max )
-			update_display();
+		if (is_display_on()) _progress_bar.update(progress(current));
 		return ! is_aborted();
 	}
 
 	void check_user_interrupt_master() {
 		if ( !is_aborted() && checkInterrupt() ) {
-			//REprintf("detected User interruption...\n");
 			abort();
 		}
 	}
@@ -156,52 +151,10 @@ public: // ===== methods for non-MASTER threads =====
 		return ! is_aborted();
 	}
 
-public: // ===== methods related to DISPLAY, should not be called directly =====
-
-	void update_display() {
-		if ( !is_display_on() )
-			return;
-		int nb_ticks = _compute_nb_ticks(_current) - _compute_nb_ticks(_last_displayed);
-		if (nb_ticks > 0) {
-			_last_displayed = _current;
-			_display_ticks(nb_ticks);
-		}
-
-		if ( _current >= _max )
-			end_display();
-	}
-
-	void end_display() {
-		if ( !is_display_on() )
-			return;
-		if ( ! is_aborted() ) {
-			// compute the remaining ticks and display them
-			int remaining = 50 - _compute_nb_ticks(_last_displayed);
-			_display_ticks(remaining);
-		}
-		REprintf("|\n");
-		R_FlushConsole();
-	}
-
-	void display_progress_bar() {
-		if ( !is_display_on() )
-			return;
-		REprintf("0%%   10   20   30   40   50   60   70   80   90   100%%\n");
-		REprintf("|----|----|----|----|----|----|----|----|----|----|\n");
-		R_FlushConsole();
-	}
-
 protected: // ==== other instance methods =====
-
-	int _compute_nb_ticks(unsigned long current) {
-		return current * 50 / _max;
-	}
-
-	void _display_ticks(int nb) {
-		for (int i = 0; i < nb; ++i) {
-			REprintf("*");
-			R_FlushConsole();
-		}
+	// convert current value to [0-1] progress
+	double progress(unsigned long current) {
+		return double(current) / double(_max);
 	}
 
 	/**
@@ -217,16 +170,17 @@ protected: // ==== other instance methods =====
 		_max = max;
 		if ( _max <= 0 )
 			_max = 1;
-		_last_displayed = _current = 0;
+		_current = 0;
 		_display_progress = display_progress;
 		_abort = false;
 	}
 
 
 private: // ===== INSTANCE VARIABLES ====
+	ProgressBar _progress_bar;
 	unsigned long _max; 			// the nb of tasks to perform
 	unsigned long _current; 		// the current nb of tasks performed
-	unsigned long _last_displayed; 	// the nb of tasks last displayed
+
 	bool _abort;					// whether the process should abort
 	bool _display_progress;			// whether to display the progress bar
 

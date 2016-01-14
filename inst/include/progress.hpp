@@ -35,8 +35,6 @@ public:
 	}
 
 	~Progress() {
-		if ( monitor().is_display_on() && ! monitor().is_aborted() )
-			monitor().end_display();
 		delete monitor_singleton();
 		monitor_singleton() = 0;
 	}
