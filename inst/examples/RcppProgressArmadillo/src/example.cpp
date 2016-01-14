@@ -15,7 +15,7 @@ double your_long_computation(int nb) {
 		    arma::mat m2 = arma::eye<arma::mat>(3, 3);
 
 		    m1 = m1 + 3 * (m1 + m2);
-			sum += m1[0, 0];
+			sum += m1[0];
 		}
 	}
 
