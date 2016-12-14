@@ -1,5 +1,5 @@
 R=R
-VERSION=0.2
+VERSION=0.3
 RDEVEL=rocker/r-devel
 RCHECKER=rcpp-rdevel
 NCPUS=4
@@ -7,8 +7,11 @@ NCPUS=4
 clean:
 	rm -f  src/*.o src/*.so */*~ *~ src/*.rds manual.pdf
 	rm -rf *.Rcheck/ checks .Rd2pdf*
-	rm -f RcppProgress_$(VERSION).tar.gz
+#	rm -f RcppProgress_$(VERSION).tar.gz
 	$(shell bash -c "shopt -s globstar && rm -f **/*.o **/*.so")
+
+build:
+	Rscript -e 'build(".", "/tmp")'
 
 install: RcppProgress_$(VERSION).tar.gz
 	$(R) CMD INSTALL $<
@@ -27,8 +30,10 @@ RcppProgress_$(VERSION).tar.gz:
 	$(R) CMD build .
 
 check: clean
+	rm -f RcppProgress_*.tar.gz
 	$(R) CMD build .
-	$(R) CMD check RcppProgress_$(VERSION).tar.gz
+	$(R) CMD check -o /tmp --as-cran RcppProgress_*.tar.gz
+	rm -f RcppProgress_*.tar.gz
 
 doc:
 	$(R) CMD Rd2pdf -o manual.pdf .
@@ -43,17 +48,17 @@ RCHECKER=rcpp-rdevel
 #	docker pull $(RDEVEL)
 #	docker run --name $(RCHECKER) -ti -v $(PWD):/tmp/ -w /tmp -u docker $(RDEVEL) Rscript -e 'install.packages("Rcpp")'
 
-check-r-devel: RcppProgress_$(VERSION).tar.gz build-docker-checker
+check-r-devel: build-docker-checker
 	-docker rm  $(RCHECKER)
-	docker run --name $(RCHECKER) -ti -v $(PWD):/tmp/ -w /tmp -u docker $(RCHECKER) R CMD check --as-cran RcppProgress_$(VERSION).tar.gz
+	docker run --name $(RCHECKER) -ti -v $(PWD):/root/rcpp_progress -w /root/rcpp_progress $(RCHECKER) make check
 
 
 win-builder-upload: RcppProgress_$(VERSION).tar.gz
 	lftp  -u anonymous,karl.forner@gmail.com -e "set ftp:passive-mode true; cd R-release; put RcppProgress_$(VERSION).tar.gz; cd ../R-devel;  put RcppProgress_$(VERSION).tar.gz; bye" ftp://win-builder.r-project.org
 
 run-r-devel: RcppProgress_$(VERSION).tar.gz build-docker-checker
-	-docker rm  $(RCHECKER)
-	docker run --name $(RCHECKER) -ti -v $(PWD):/tmp/ -w /tmp -u docker $(RCHECKER) bash
+	@-docker rm  $(RCHECKER)
+	docker run --name $(RCHECKER) -ti -v $(PWD):/root/ -w /root  $(RCHECKER) bash
 
 #fetch-dependent-packages:
 #	Rscript -e 'pkgs <- available.packages(); deps <- tools::package_dependencies("RcppProgress", pkgs, which = "all", reverse = TRUE)[[1]];download.packages(deps, ".")'
