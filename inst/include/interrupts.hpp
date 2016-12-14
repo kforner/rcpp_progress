@@ -17,7 +17,8 @@
 #ifndef _RcppProgress_INTERRUPTS_HPP
 #define _RcppProgress_INTERRUPTS_HPP
 
-#include <Rinternals.h>
+// N.B: seems the right way to include Rinternals.h in a Rcpp package
+#include <Rcpp.h>
 
 
 static void chkIntFn(void *dummy) {
