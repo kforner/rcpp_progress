@@ -1,3 +1,8 @@
+# RcppProgress 0.3
+
+* fixed issue #2 about extra progress bar symbols being printed
+
+
 # RcppProgress 0.2
 
 * improvement by Jacques-Henri Jourdan to make it possible to use the progress monitor in multiple cpp files.
