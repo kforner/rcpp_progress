@@ -11,10 +11,11 @@ clean:
 	$(shell bash -c "shopt -s globstar && rm -f **/*.o **/*.so")
 
 build:
-	Rscript -e 'build(".", "/tmp")'
-
-install: RcppProgress_$(VERSION).tar.gz
-	$(R) CMD INSTALL $<
+	rm -f RcppProgress_*.tar.gz
+	Rscript -e 'devtools::build(".", "/tmp")'
+	
+install: build
+	$(R) CMD INSTALL /tmp/RcppProgress_*.tar.gz
 
 test-RcppProgressArmadillo: install
 	R CMD INSTALL inst/examples/RcppProgressArmadillo/
@@ -52,6 +53,9 @@ check-r-devel: build-docker-checker
 	-docker rm  $(RCHECKER)
 	docker run --name $(RCHECKER) -ti -v $(PWD):/root/rcpp_progress -w /root/rcpp_progress $(RCHECKER) make check
 
+test-r-devel: 
+	-docker rm  $(RCHECKER)
+	docker run --name $(RCHECKER) -ti -v $(PWD):/root/rcpp_progress -w /root/rcpp_progress $(RCHECKER) make tests
 
 win-builder-upload: RcppProgress_$(VERSION).tar.gz
 	lftp  -u anonymous,karl.forner@gmail.com -e "set ftp:passive-mode true; cd R-release; put RcppProgress_$(VERSION).tar.gz; cd ../R-devel;  put RcppProgress_$(VERSION).tar.gz; bye" ftp://win-builder.r-project.org
