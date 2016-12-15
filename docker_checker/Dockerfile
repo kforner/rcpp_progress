@@ -15,3 +15,4 @@ RUN  Rscript -e 'install.packages(c("RcppArmadillo", "BH"))'
 #RUN wget http://cran.r-project.org/src/contrib/DNAprofiles_0.2.tar.gz
 
 RUN apt-get install -y pandoc
+RUN Rscript -e 'devtools::install_github("r-hub/rhub")'
