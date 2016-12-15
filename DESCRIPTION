@@ -1,10 +1,10 @@
 Package: RcppProgress
-Maintainer: Karl Forner <karl.forner@quartzbio.com>
+Maintainer: Karl Forner <karl.forner@gmail.com>
 License: GPL (>= 3)
 Title: An Interruptible Progress Bar with OpenMP Support for C++ in R Packages
 Type: Package
 LazyLoad: yes
-Author: Karl Forner <karl.forner@quartzbio.com>
+Author: Karl Forner <karl.forner@gmail.com>
 Description: Allows to display a progress bar in the R
     console for long running computations taking place in c++ code,
     and support for interrupting those computations even in multithreaded
