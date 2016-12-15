@@ -4,6 +4,8 @@ Makefile
 \.tar.gz$
 docker_checker
 ^\..+
+\.o
+\.so
 
 
 
