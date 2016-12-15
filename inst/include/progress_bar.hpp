@@ -10,7 +10,11 @@
 #define _RcppProgress_PROGRESS_BAR_HPP
 
 #include <R_ext/Print.h>
+
+// for unices only
+#if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
 #include <Rinterface.h>
+#endif
 
 class ProgressBar {
 public: // ====== LIFECYCLE =====
@@ -32,7 +36,7 @@ public: // ===== main methods =====
 	void display_progress_bar() {
 		REprintf("0%%   10   20   30   40   50   60   70   80   90   100%%\n");
 		REprintf("|----|----|----|----|----|----|----|----|----|----|\n");
-		R_FlushConsole();
+		flush_console();
 	}
 
 	// will finalize display if needed
@@ -64,7 +68,7 @@ protected: // ==== other instance methods =====
 		if (_finalized) return;
 
 		REprintf("|\n");
-		R_FlushConsole();
+    flush_console();
 		_finalized = true;
 	}
 
@@ -77,6 +81,13 @@ protected: // ==== other instance methods =====
 			REprintf("*");
 			R_FlushConsole();
 		}
+	}
+
+	// N.B: does nothing on windows
+	void flush_console() {
+#if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
+	  R_FlushConsole();
+#endif
 	}
 
 private: // ===== INSTANCE VARIABLES ====
