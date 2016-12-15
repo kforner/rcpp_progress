@@ -1,5 +1,7 @@
 # RcppProgress 0.3
 
+* fixed issue #3: The Rcpp namespace is no longer open
+
 * fixed issue #2 about extra progress bar symbols being printed
 
 
