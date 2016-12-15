@@ -4,6 +4,8 @@ RDEVEL=rocker/r-devel
 RCHECKER=rcpp-rdevel
 NCPUS=4
 
+
+
 clean:
 	rm -f  src/*.o src/*.so */*~ *~ src/*.rds manual.pdf
 	rm -rf *.Rcheck/ checks .Rd2pdf*
@@ -30,6 +32,8 @@ tests: test-RcppProgressExample test-RcppProgressArmadillo
 RcppProgress_$(VERSION).tar.gz: 
 	$(R) CMD build .
 
+TARBALL=$(wildcard /tmp/RcppProgress_*.tar.gz)
+
 check: clean
 	rm -f RcppProgress_*.tar.gz
 	$(R) CMD build .
@@ -45,6 +49,10 @@ build-docker-checker:
 RDEVEL=rocker/r-devel
 RCHECKER=rcpp-rdevel
 
+check_rhub_windows: build
+	Rscript -e 'rhub::check_on_windows("$(TARBALL)")'
+
+
 #build_rchecker:
 #	docker pull $(RDEVEL)
 #	docker run --name $(RCHECKER) -ti -v $(PWD):/tmp/ -w /tmp -u docker $(RDEVEL) Rscript -e 'install.packages("Rcpp")'
@@ -57,8 +65,10 @@ test-r-devel:
 	-docker rm  $(RCHECKER)
 	docker run --name $(RCHECKER) -ti -v $(PWD):/root/rcpp_progress -w /root/rcpp_progress $(RCHECKER) make tests
 
-win-builder-upload: RcppProgress_$(VERSION).tar.gz
-	lftp  -u anonymous,karl.forner@gmail.com -e "set ftp:passive-mode true; cd R-release; put RcppProgress_$(VERSION).tar.gz; cd ../R-devel;  put RcppProgress_$(VERSION).tar.gz; bye" ftp://win-builder.r-project.org
+
+
+win-builder-upload: build
+	lftp  -u anonymous,karl.forner@gmail.com -e "set ftp:passive-mode true; cd R-release; put $(TARBALL); cd ../R-devel;  put $(TARBALL); bye" ftp://win-builder.r-project.org
 
 run-r-devel: RcppProgress_$(VERSION).tar.gz build-docker-checker
 	@-docker rm  $(RCHECKER)
