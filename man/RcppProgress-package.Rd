@@ -189,5 +189,17 @@ field of the package DESCRIPTION file.
   Maintainer: Karl Forner <karl.forner@quartzbio.com>
 }
 
+\examples{
+	# these are implemented as examples inside RcppProgress
+	# check the source code
+
+	# the underlying test_sequential c++ function has a progress bar and is interruptible
+	RcppProgress:::test_sequential(100, 300, 4)
+
+	# the underlying test_test_multithreaded c++ function is multithreaded
+	# , has a progress bar and is still interruptible
+	RcppProgress:::test_multithreaded(nb = 300, threads = 4)
+}
+
 \keyword{ package }
 
