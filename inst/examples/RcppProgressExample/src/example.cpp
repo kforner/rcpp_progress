@@ -35,7 +35,9 @@ void test_multithreaded_omp2(int max, int nb, int threads, bool display_progress
 #endif
 
 	Progress p(max, display_progress); // create the progress monitor
+#ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic)
+#endif
 	for (int i = 0; i < max; ++i) {
 		if ( p.increment() ) { // the only way to exit an OpenMP loop
 			your_long_computation(nb);
