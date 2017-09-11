@@ -98,7 +98,9 @@ public: // ===== PBLIC MAIN INTERFACE =====
 	 * request computation abortion
 	 */
 	void abort() {
+#ifdef _OPENMP
 #pragma omp critical
+#endif
 		_abort = true;
 
 	}
@@ -140,13 +142,17 @@ public: // ===== methods for MASTER thread =====
 public: // ===== methods for non-MASTER threads =====
 
 	bool atomic_increment(unsigned long amount=1) {
+#ifdef _OPENMP
 #pragma omp atomic
+#endif
 		_current+=amount;
 		return ! is_aborted();
 	}
 
 	bool atomic_update(unsigned long current) {
+#ifdef _OPENMP
 #pragma omp critical
+#endif
 		_current=current;
 		return ! is_aborted();
 	}
