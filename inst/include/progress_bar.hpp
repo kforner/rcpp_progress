@@ -30,9 +30,10 @@ public: // ====== LIFECYCLE =====
 		_max_ticks = 50;
 		_ticks_displayed = 0;
 		_finalized = false;
-		timer_flag = true;
+		_mode_flag = 1;
+		_timer_flag = true;
 		time_t start,end;
-		timer_count = 0;
+		_timer_count = 1;
 	}
 
 	~ProgressBar() {
@@ -40,36 +41,79 @@ public: // ====== LIFECYCLE =====
 
 public: // ===== main methods =====
 
-	void display_progress_bar() {
-		REprintf("0%%   10   20   30   40   50   60   70   80   90   100%%\n");
-		REprintf("|----|----|----|----|----|----|----|----|----|----|\n");
-		flush_console();
+	void display_progress_bar(int mode = 1) {
+		this->_mode_flag = mode; 
+		if (_mode_flag == 1) {
+  		REprintf("0%%   10   20   30   40   50   60   70   80   90   100%%\n");
+  		REprintf("|----|----|----|----|----|----|----|----|----|----|\n");
+  		flush_console();
+		} else if (_mode_flag == 2) {
+			REprintf("0%% 10%%\n");
+  		REprintf("|----|\n");
+  		flush_console();
+		}
 	}
 
 	// will finalize display if needed
 	void update(float progress) {
-		_update_ticks_display(progress);
-		if (_ticks_displayed >= _max_ticks)
-			_finalize_display();
-		
-		timer_count++;
-		
-		if (timer_flag) {
-		  timer_flag = false;
-		  time(&start);
-		} else if (timer_count % 10 == 0) {
-		  time(&end);
-		  
-		  double rem_time = (std::difftime(end, start) / progress) * (1 - progress);
-      int rem_time_simple = (int) rem_time;
-		  
-		  std::stringstream strs;
-		  strs << rem_time_simple;
-		  std::string temp_str = strs.str();
-		  char const* char_type = temp_str.c_str();
-		  
-		  REprintf(char_type);
-		  REprintf("s\n");
+	  
+	  // mode 1: simple progress bar  
+	  if (_mode_flag == 1) {
+  		
+  		_update_ticks_display(progress);
+  		if (_ticks_displayed >= _max_ticks)
+  			_finalize_display();
+	  
+	  // mode 2: progress bar with time estimation
+	  } else if (_mode_flag == 2) {
+	    
+	    _update_ticks_display(progress);
+	    if (_ticks_displayed >= _max_ticks)
+	      _finalize_display();
+  		
+  		if (_timer_flag) {
+  		  _timer_flag = false;
+  		  time(&start);
+  		} else if (_ticks_displayed >= _max_ticks) {
+  		  time(&end);
+  		} else if ((int) (((double)_ticks_displayed / (double)_max_ticks) * 100) == 10 * _timer_count) {
+        
+        _timer_count++;
+
+  		  time(&end);
+  		  
+  		  double pas_time = std::difftime(end, start);
+  		  double rem_time = (pas_time / progress) * (1 - progress);
+  		  int pas_time_simple = (int) pas_time;
+        int rem_time_simple = (int) rem_time;
+        
+        std::stringstream rem_strs;
+        if (rem_time_simple > 3600) {
+          rem_strs << (int) (rem_time_simple / 3600) << "h"; 
+        } else if (rem_time_simple > 60) {
+          rem_strs << (int) (rem_time_simple / 60) << "min"; 
+        } else {
+          rem_strs << rem_time_simple << "s"; 
+        }
+        std::string rem = rem_strs.str();
+        
+        std::stringstream pas_strs;
+        if (pas_time_simple > 3600) {
+          pas_strs << (int) (pas_time_simple / 3600) << "h"; 
+        } else if (pas_time_simple > 60) {
+          pas_strs << (int) (pas_time_simple / 60) << "min"; 
+        } else {
+          pas_strs << pas_time_simple << "s"; 
+        }
+        std::string pas = pas_strs.str();
+  		  
+  		  std::stringstream strs;
+  		  strs << "| " << "⌛ " << rem << " (" << pas << ")\n";
+  		  std::string temp_str = strs.str();
+  		  char const* char_type = temp_str.c_str();
+  		  
+  		  REprintf(char_type);
+  		}
 		}
 		
 	}
@@ -122,9 +166,10 @@ private: // ===== INSTANCE VARIABLES ====
 	int _max_ticks;   		// the total number of ticks to print
 	int _ticks_displayed; 	// the nb of ticks already displayed
 	bool _finalized;
-  bool timer_flag;
+	int _mode_flag;
+  bool _timer_flag;
   time_t start,end;
-  int timer_count;
+  int _timer_count;
   
 };
 

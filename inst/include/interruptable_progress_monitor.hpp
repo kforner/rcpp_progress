@@ -29,9 +29,9 @@ public: // ====== LIFECYCLE =====
 	 * @param max the expected number of tasks to perform
 	 * @param display_progress whether to display a progress bar in the console
 	 */
-	InterruptableProgressMonitor(unsigned long max = 1,  bool display_progress = true)  {
+	InterruptableProgressMonitor(unsigned long max = 1,  bool display_progress = true, int mode = 1)  {
 		reset(max, display_progress);
-		if (is_display_on()) _progress_bar.display_progress_bar();
+		if (is_display_on()) _progress_bar.display_progress_bar(mode);
 	}
 
 	~InterruptableProgressMonitor() {
