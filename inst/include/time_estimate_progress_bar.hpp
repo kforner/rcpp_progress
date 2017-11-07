@@ -1,13 +1,13 @@
 /*
- * progress_bar.hpp.hpp
+ * time_estimate_progress_bar.hpp
  *
  * A class that display a progress bar
  *
  * Author: karl.forner@gmail.com
  *
  */
-#ifndef _RcppProgress_PROGRESS_BAR_HPP
-#define _RcppProgress_PROGRESS_BAR_HPP
+#ifndef _RcppProgress_TIME_ESTIMATE_PROGRESS_BAR_HPP
+#define _RcppProgress_TIME_ESTIMATE_PROGRESS_BAR_HPP
 
 #include <R_ext/Print.h>
 #include <time.h>
@@ -20,7 +20,7 @@
 #include <Rinterface.h>
 #endif
 
-class ProgressBar {
+class TimeEstimateProgressBar {
 public: // ====== LIFECYCLE =====
 
 	/**

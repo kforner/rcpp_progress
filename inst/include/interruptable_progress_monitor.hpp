@@ -14,7 +14,7 @@
 
 
 #include "interrupts.hpp"
-#include "progress_bar.hpp"
+#include "simple_progress_bar.hpp"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -29,9 +29,9 @@ public: // ====== LIFECYCLE =====
 	 * @param max the expected number of tasks to perform
 	 * @param display_progress whether to display a progress bar in the console
 	 */
-	InterruptableProgressMonitor(unsigned long max = 1,  bool display_progress = true, int mode = 1)  {
+	InterruptableProgressMonitor(unsigned long max = 1,  bool display_progress = true)  {
 		reset(max, display_progress);
-		if (is_display_on()) _progress_bar.display_progress_bar(mode);
+		if (is_display_on()) _progress_bar.display_progress_bar();
 	}
 
 	~InterruptableProgressMonitor() {
@@ -183,7 +183,7 @@ protected: // ==== other instance methods =====
 
 
 private: // ===== INSTANCE VARIABLES ====
-	ProgressBar _progress_bar;
+	SimpleProgressBar _progress_bar;
 	unsigned long _max; 			// the nb of tasks to perform
 	unsigned long _current; 		// the current nb of tasks performed
 

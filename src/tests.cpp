@@ -16,8 +16,8 @@ void long_computation(int nb) {
 }
 
 // sequential test, that displays optionally a progress bar
-void test_sequential(int max, int nb, bool display_progress, int mode) {
-	Progress p(max, display_progress, mode);
+void test_sequential(int max, int nb, bool display_progress) {
+	Progress p(max, display_progress);
 	for (int i = 0; i < max; ++i) {
 		if ( ! p.is_aborted() ) {
 			long_computation(nb);
@@ -27,7 +27,7 @@ void test_sequential(int max, int nb, bool display_progress, int mode) {
 }
 
 // same, but multithreaded if OpenMP is available test, that displays optionally a progress bar
-void test_multithreaded_omp(int max, int nb, int threads, bool display_progress, int mode) {
+void test_multithreaded_omp(int max, int nb, int threads, bool display_progress) {
 
 #ifdef _OPENMP
 	if ( threads > 0 )
@@ -35,7 +35,7 @@ void test_multithreaded_omp(int max, int nb, int threads, bool display_progress,
 	REprintf("Number of threads=%i\n", omp_get_max_threads());
 #endif
 
-	Progress p(max, display_progress, mode); // create the progress monitor
+	Progress p(max, display_progress); // create the progress monitor
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic)
 #endif
@@ -47,12 +47,12 @@ void test_multithreaded_omp(int max, int nb, int threads, bool display_progress,
 	}
 }
 
-RcppExport SEXP test_sequential_wrapper(SEXP __max, SEXP __nb, SEXP __display_progress, SEXP __mode) {
-	test_sequential(as<unsigned long>(__max), as<int>(__nb), as<bool>(__display_progress), as<int>(__mode));
+RcppExport SEXP test_sequential_wrapper(SEXP __max, SEXP __nb, SEXP __display_progress) {
+	test_sequential(as<unsigned long>(__max), as<int>(__nb), as<bool>(__display_progress));
 	return R_NilValue;
 }
 
-RcppExport SEXP test_multithreaded_wrapper(SEXP __max, SEXP __nb, SEXP __threads, SEXP __display_progress, SEXP __mode) {
-	test_multithreaded_omp(as<unsigned long>(__max), as<int>(__nb), as<int>(__threads), as<bool>(__display_progress), as<int>(__mode));
+RcppExport SEXP test_multithreaded_wrapper(SEXP __max, SEXP __nb, SEXP __threads, SEXP __display_progress) {
+	test_multithreaded_omp(as<unsigned long>(__max), as<int>(__nb), as<int>(__threads), as<bool>(__display_progress));
 	return R_NilValue;
 }
