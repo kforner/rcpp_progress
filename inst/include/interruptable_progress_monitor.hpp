@@ -14,6 +14,7 @@
 
 #include "interrupts.hpp"
 #include "simple_progress_bar.hpp"
+//#include "time_estimate_progress_bar.hpp"
 
 #ifdef _OPENMP
 #include <omp.h>
