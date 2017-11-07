@@ -9,7 +9,7 @@
 #ifndef _RcppProgress_SIMPLE_PROGRESS_BAR_HPP
 #define _RcppProgress_SIMPLE_PROGRESS_BAR_HPP
 
-#include "progress_bar.h"
+#include "progress_bar.hpp"
 
 // for unices only
 #if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
