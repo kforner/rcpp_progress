@@ -32,11 +32,11 @@ public: // ====== LIFECYCLE =====
 	InterruptableProgressMonitor(
 	  unsigned long max = 1, 
 	  bool display_progress = true, 
-	  ProgressBar* proggy = new SimpleProgressBar
+	  std::unique_ptr<ProgressBar> proggy = std::make_unique<SimpleProgressBar>()
   )  {
 		reset(max, display_progress);
 		if (is_display_on()) {
-		  this->_progress_bar = proggy;
+		  this->_progress_bar = std::move(proggy);
 		  _progress_bar->display();
 		}
 	}
@@ -190,7 +190,7 @@ protected: // ==== other instance methods =====
 
 
 private: // ===== INSTANCE VARIABLES ====
-  ProgressBar* _progress_bar;
+  std::unique_ptr<ProgressBar> _progress_bar;
 	unsigned long _max; 			// the nb of tasks to perform
 	unsigned long _current; 		// the current nb of tasks performed
 

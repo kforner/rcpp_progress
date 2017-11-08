@@ -27,12 +27,12 @@ public:
 	Progress(
 	  unsigned long max, 
 	  bool display_progress = true, 
-	  ProgressBar* proggy = new SimpleProgressBar
+    std::unique_ptr<ProgressBar> proggy = std::make_unique<SimpleProgressBar>()
   ) {
 		if ( monitor_singleton() != 0) { // something is wrong, two simultaneous Progress monitoring
 			Rf_error("ERROR: there is already an InterruptableProgressMonitor instance defined");
 		}
-		monitor_singleton() = new InterruptableProgressMonitor(max, display_progress, proggy);
+		monitor_singleton() = new InterruptableProgressMonitor(max, display_progress, std::move(proggy));
 	}
 
 	~Progress() {
