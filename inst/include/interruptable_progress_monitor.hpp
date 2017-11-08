@@ -37,7 +37,7 @@ public: // ====== LIFECYCLE =====
 		reset(max, display_progress);
 		if (is_display_on()) {
 		  this->_progress_bar = proggy;
-		  _progress_bar->display_progress_bar();
+		  _progress_bar->display();
 		}
 	}
 

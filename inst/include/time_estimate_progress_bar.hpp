@@ -43,7 +43,7 @@ public: // ====== LIFECYCLE =====
 
 public: // ===== main methods =====
 
-	void display_progress_bar() {
+	void display() {
 		REprintf("0%% 10%%\n");
 		REprintf("|----|\n");
 		flush_console();

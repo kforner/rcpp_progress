@@ -15,7 +15,7 @@ class ProgressBar {
   public: 
     
     virtual ~ProgressBar() = 0;
-    virtual void display_progress_bar() = 0;
+    virtual void display() = 0;
     virtual void update(float progress) = 0;
     virtual void end_display() = 0;
       
