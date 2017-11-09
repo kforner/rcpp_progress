@@ -1,4 +1,7 @@
 # RcppProgress
+[![Build Status](https://travis-ci.org/kforner/rcpp_progress.svg?branch=master)](https://travis-ci.org/kforner/rcpp_progress)
+[![codecov](https://codecov.io/github/codecov/example-r/branch/master/graphs/badge.svg)](https://codecov.io/github/kforner/rcpp_progress)
+
 a R package that provides a c++ interruptible progress bar with OpenMP support for c++ code in R packages
 
 ## example
