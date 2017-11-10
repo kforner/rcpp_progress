@@ -1,9 +1,7 @@
 R=R
-VERSION=0.3
-RDEVEL=rocker/r-devel
+VERSION=0.4
 RCHECKER=rcpp-rdevel
 NCPUS=4
-
 
 
 clean:
@@ -29,57 +27,53 @@ test-RcppProgressExample: install
 
 tests: test-RcppProgressExample test-RcppProgressArmadillo
 
-RcppProgress_$(VERSION).tar.gz: 
-	$(R) CMD build .
 
-TARBALL=$(wildcard /tmp/RcppProgress_*.tar.gz)
 
 check: clean
-	rm -f RcppProgress_*.tar.gz
-	$(R) CMD build .
-	$(R) CMD check -o /tmp --as-cran RcppProgress_*.tar.gz
-	rm -f RcppProgress_*.tar.gz
+	R -q -e 'devtools::check()'
+
+# check with Rdevel
+check-rdev: clean
+	Rdevel -q -e 'devtools::check()'
 
 doc:
 	$(R) CMD Rd2pdf -o manual.pdf .
 
-build-docker-checker:
+################## docker checker ##################################
+# directory in which the local dir is mounted inside the container
+DIR=/root/rcpp_progress
+
+docker/build:
 	docker build -t $(RCHECKER) docker_checker
 
-RDEVEL=rocker/r-devel
-RCHECKER=rcpp-rdevel
-
-check_rhub_windows: build
-	Rscript -e 'rhub::check_on_windows("$(TARBALL)")'
-
-
-#build_rchecker:
-#	docker pull $(RDEVEL)
-#	docker run --name $(RCHECKER) -ti -v $(PWD):/tmp/ -w /tmp -u docker $(RDEVEL) Rscript -e 'install.packages("Rcpp")'
-
-check-r-devel: build-docker-checker
+# check with r-base
+docker/check: docker/build
 	-docker rm  $(RCHECKER)
-	docker run --name $(RCHECKER) -ti -v $(PWD):/root/rcpp_progress -w /root/rcpp_progress $(RCHECKER) make check
+	docker run --name $(RCHECKER) -ti -v $(PWD):$(DIR) -w $(DIR) $(RCHECKER) make check
+
+# check with r-devel
+docker/check-rdev: docker/build
+	-docker rm  $(RCHECKER)
+	docker run --name $(RCHECKER) -ti -v $(PWD):$(DIR) -w $(DIR) $(RCHECKER) make check-rdev
+
+docker/run: docker/build
+	@-docker rm  $(RCHECKER)
+	docker run --name $(RCHECKER) -ti -v $(PWD):/root/ -w /root  $(RCHECKER) bash
+
+
 
 test-r-devel: 
 	-docker rm  $(RCHECKER)
-	docker run --name $(RCHECKER) -ti -v $(PWD):/root/rcpp_progress -w /root/rcpp_progress $(RCHECKER) make tests
+	docker run --name $(RCHECKER) -ti -v $(PWD):$(DIR) -w $(DIR) $(RCHECKER) make tests
+
+
+check_rhub_windows: build
+	Rscript -e 'rhub::check_on_windows("$(TARBALL)")'
 
 
 
 win-builder-upload: build
 	lftp  -u anonymous,karl.forner@gmail.com -e "set ftp:passive-mode true; cd R-release; put $(TARBALL); cd ../R-devel;  put $(TARBALL); bye" ftp://win-builder.r-project.org
 
-run-r-devel: RcppProgress_$(VERSION).tar.gz build-docker-checker
-	@-docker rm  $(RCHECKER)
-	docker run --name $(RCHECKER) -ti -v $(PWD):/root/ -w /root  $(RCHECKER) bash
-
-#fetch-dependent-packages:
-#	Rscript -e 'pkgs <- available.packages(); deps <- tools::package_dependencies("RcppProgress", pkgs, which = "all", reverse = TRUE)[[1]];download.packages(deps, ".")'
 
 
-check-rdevel-deps: RcppProgress_$(VERSION).tar.gz build-docker-checker 
-	-docker rm  $(RCHECKER)
-	-mkdir checks
-	cp RcppProgress_$(VERSION).tar.gz checks
-	docker run --rm --name $(RCHECKER) -ti -v $(PWD):/tmp/ -w /tmp -u docker $(RCHECKER) Rscript -e 'setwd("checks");library(tools);check_packages_in_dir(".", reverse=TRUE, Ncpus=$(NCPUS));summarize_check_packages_in_dir_results(".")'
