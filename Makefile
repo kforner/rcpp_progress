@@ -8,7 +8,7 @@ NCPUS=4
 
 clean:
 	rm -f  src/*.o src/*.so */*~ *~ src/*.rds manual.pdf
-#	rm -f RcppProgress_$(VERSION).tar.gz
+	rm -rf lib
 	$(shell bash -c "shopt -s globstar && rm -f **/*.o **/*.so")
 
 lib:
@@ -18,8 +18,22 @@ install: lib
 	$(R) -e 'pkg=devtools::build(".", "lib");install.packages(pkg, "lib")'
 
 # tests require an installed package
-tests: install
+tests: clean install
 	R_LIBS=lib Rscript -e 'devtools::test()'
+
+test-RcppProgressArmadillo: install
+	R CMD INSTALL inst/examples/RcppProgressArmadillo/
+	Rscript test_rcpp_armadillo_example.R
+
+debug-RcppProgressExample: install
+	R_LIBS=lib Rscript -e 'devtools::load_all("inst/examples/RcppProgressExample", recompile = TRUE); RcppProgressExample:::test_multithreaded();'
+
+debug-RcppProgressETA: install
+	R_LIBS=lib Rscript -e 'devtools::load_all("inst/examples/RcppProgressETA", recompile = TRUE); RcppProgressETA:::test_sequential();'
+
+
+	#Rscript test_rcpp_example.R
+
 
 check: clean
 	R -q -e 'devtools::check()'
@@ -30,6 +44,8 @@ check-rdev: clean
 
 doc:
 	$(R) CMD Rd2pdf -o manual.pdf .
+
+
 
 ################## docker checker ##################################
 # directory in which the local dir is mounted inside the container
