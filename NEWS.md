@@ -1,3 +1,7 @@
+# RcppProgress 0.4
+
+* made ProgressBar a virtual class with two predefined subclasses: SimpleProgressBar (stable) and TimeEstimateProgressBar (experimental). This should simplify the implementation of custom progress bars (draft by Clemens Schmid @nevrome)
+
 # RcppProgress 0.3
 
 * fixed issue #3: The Rcpp namespace is no longer open
