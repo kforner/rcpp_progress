@@ -15,4 +15,8 @@ Version: 0.4
 Date: 2016-12-14
 Imports: Rcpp (>= 0.9.4)
 LinkingTo: Rcpp
-
+Suggests:
+	devtools,
+	roxygen2,
+	testthat
+RoxygenNote: 6.0.1
