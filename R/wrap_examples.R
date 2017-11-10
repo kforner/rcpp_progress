@@ -35,4 +35,11 @@ amardillo_multithreaded <- function(max = 100, nb = 1000, threads = 0,
   fun(max, nb, threads, display_progress)
 }
 
+eta_progress_bar <- function(max = 100, nb = 1000, display_progress = TRUE)
+{
+  pkg <- 'RcppProgressETA'
+  load_my_example_pkg(pkg)
+  fun <- get_function_from_pkg(pkg, 'test_sequential')
+  fun(max, nb, display_progress)
+}
 

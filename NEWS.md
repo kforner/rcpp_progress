@@ -1,9 +1,11 @@
-# RcppProgress 0.5
-
-* made ProgressBar a virtual class with two predefined subclasses: SimpleProgressBar (stable) and TimeEstimateProgressBar (experimental). This should simplify the implementation of custom progress bars (draft by Clemens Schmid @nevrome)
-
-
 # RcppProgress 0.4
+
+  - RccpProgress now can use custom Progress Bars (draft by Clemens Schmid @nevrome)
+    The include example package RcppProgressETA, included in RcppProgress is an
+    example of using such a custom progress bar, and also contains an implementation
+    (by Clemens Schmid @nevrome) of a vertical progress bar that displays the ETA
+    (Estimated Time of completion).
+
 
   - reorganized the example tests functions: they are no longer implemented inside
     RcppProgress code, but called from the embedded RcppProgressExample example
