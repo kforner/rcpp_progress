@@ -12,9 +12,9 @@
 #ifndef _RcppProgress_INTERRUPTABLE_PROGRESS_MONITOR_HPP
 #define _RcppProgress_INTERRUPTABLE_PROGRESS_MONITOR_HPP
 
-
 #include "interrupts.hpp"
-#include "progress_bar.hpp"
+#include "simple_progress_bar.hpp"
+//#include "time_estimate_progress_bar.hpp"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -29,13 +29,20 @@ public: // ====== LIFECYCLE =====
 	 * @param max the expected number of tasks to perform
 	 * @param display_progress whether to display a progress bar in the console
 	 */
-	InterruptableProgressMonitor(unsigned long max = 1,  bool display_progress = true)  {
+	InterruptableProgressMonitor(
+	  unsigned long max = 1, 
+	  bool display_progress = true, 
+	  std::unique_ptr<ProgressBar> proggy = std::make_unique<SimpleProgressBar>()
+  )  {
 		reset(max, display_progress);
-		if (is_display_on()) _progress_bar.display_progress_bar();
+		if (is_display_on()) {
+		  this->_progress_bar = std::move(proggy);
+		  _progress_bar->display();
+		}
 	}
 
 	~InterruptableProgressMonitor() {
-		if (is_display_on() && !is_aborted()) _progress_bar.end_display();
+		if (is_display_on() && !is_aborted()) _progress_bar->end_display();
 	}
 
 public: // ===== ACCESSORS/SETTERS =====
@@ -129,7 +136,7 @@ public: // ===== methods for MASTER thread =====
 	 */
 	bool update_master(unsigned long current) {
 		_current = current;
-		if (is_display_on()) _progress_bar.update(progress(current));
+		if (is_display_on()) _progress_bar->update(progress(current));
 		return ! is_aborted();
 	}
 
@@ -183,7 +190,7 @@ protected: // ==== other instance methods =====
 
 
 private: // ===== INSTANCE VARIABLES ====
-	ProgressBar _progress_bar;
+  std::unique_ptr<ProgressBar> _progress_bar;
 	unsigned long _max; 			// the nb of tasks to perform
 	unsigned long _current; 		// the current nb of tasks performed
 
