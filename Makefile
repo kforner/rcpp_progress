@@ -60,6 +60,10 @@ docker/run: docker/build
 	@-docker rm  $(RCHECKER)
 	docker run --name $(RCHECKER) -ti -v $(PWD):/root/ -w /root  $(RCHECKER) bash
 
+docker/tests: docker/build
+	@-docker rm  $(RCHECKER)
+	docker run --name $(RCHECKER) -ti -v $(PWD):/root/ -w /root  $(RCHECKER) make tests
+
 
 
 test-r-devel: 

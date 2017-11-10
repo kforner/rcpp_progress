@@ -43,7 +43,7 @@ type:
  - `make docker/run`: to run a shell in the docker with the current dir mounted
  	inside
  - `make docker/check`: to check the package inside the docker
- - `make docker/test`: to run test tests of the package inside the docker
+ - `make docker/tests`: to run test tests of the package inside the docker
 
 
 
