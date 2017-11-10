@@ -1,12 +1,11 @@
 NEWS.md
 Makefile
-^test.*\.R$
+^test_rcpp.*\.R$
 \.tar.gz$
 docker_checker
+code
+lib
 ^\..+
 \.o
 \.so
-
-
-
 

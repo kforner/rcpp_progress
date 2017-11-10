@@ -2,4 +2,6 @@
 *.tar.gz
 *.o
 *.so
+lib
+*.pdf
 
