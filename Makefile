@@ -13,9 +13,12 @@ clean:
 
 lib:
 	mkdir -p $@
-	
+
 install: lib
 	$(R) -e 'pkg=devtools::build(".", "lib");install.packages(pkg, "lib")'
+
+coverage:
+	$(R) -e 'covr::package_coverage()'
 
 # tests require an installed package
 tests: clean install
@@ -32,7 +35,7 @@ debug-RcppProgressETA: install
 	R_LIBS=lib Rscript -e 'devtools::load_all("inst/examples/RcppProgressETA", recompile = TRUE); RcppProgressETA:::test_sequential();'
 
 
-	#Rscript test_rcpp_example.R
+
 
 
 check: clean
