@@ -1,9 +1,9 @@
 /*
  * interruptable_progress_monitor.hpp
  *
- * A class that monitor the progress of computations:
+ * A class that monitors the progress of computations:
  *   - can display a progress bar
- *   - can handle user (R user level) or programmatic abortion
+ *   - can handle user interrupt (R user level) or programmatic abort
  *   - can be used in OpenMP loops
  *
  * Author: karl.forner@gmail.com
@@ -13,8 +13,8 @@
 #define _RcppProgress_INTERRUPTABLE_PROGRESS_MONITOR_HPP
 
 #include "interrupts.hpp"
-#include "simple_progress_bar.hpp"
-//#include "time_estimate_progress_bar.hpp"
+#include "progress_bar.hpp"
+//#include "fetch_raw_gwas_bar.hpp"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -28,21 +28,22 @@ public: // ====== LIFECYCLE =====
 	 *
 	 * @param max the expected number of tasks to perform
 	 * @param display_progress whether to display a progress bar in the console
+	 * @param pb    the ProgressBar instance to use
 	 */
 	InterruptableProgressMonitor(
-	  unsigned long max = 1, 
-	  bool display_progress = true, 
-	  std::unique_ptr<ProgressBar> proggy = std::make_unique<SimpleProgressBar>()
-  )  {
+	  unsigned long max,
+	  bool display_progress,
+	  ProgressBar& pb
+  ) : _progress_bar(pb)
+{
 		reset(max, display_progress);
 		if (is_display_on()) {
-		  this->_progress_bar = std::move(proggy);
-		  _progress_bar->display();
+		  _progress_bar.display();
 		}
 	}
 
 	~InterruptableProgressMonitor() {
-		if (is_display_on() && !is_aborted()) _progress_bar->end_display();
+		if (is_display_on() && !is_aborted()) _progress_bar.end_display();
 	}
 
 public: // ===== ACCESSORS/SETTERS =====
@@ -50,7 +51,6 @@ public: // ===== ACCESSORS/SETTERS =====
 	bool is_display_on() const { return _display_progress; }
 	unsigned long get_max() const { return _max; }
 	bool is_aborted() const { return _abort; }
-
 
 
 public: // ===== PBLIC MAIN INTERFACE =====
@@ -136,7 +136,7 @@ public: // ===== methods for MASTER thread =====
 	 */
 	bool update_master(unsigned long current) {
 		_current = current;
-		if (is_display_on()) _progress_bar->update(progress(current));
+		if (is_display_on()) _progress_bar.update(progress(current));
 		return ! is_aborted();
 	}
 
@@ -190,7 +190,7 @@ protected: // ==== other instance methods =====
 
 
 private: // ===== INSTANCE VARIABLES ====
-  std::unique_ptr<ProgressBar> _progress_bar;
+  ProgressBar& _progress_bar;
 	unsigned long _max; 			// the nb of tasks to perform
 	unsigned long _current; 		// the current nb of tasks performed
 

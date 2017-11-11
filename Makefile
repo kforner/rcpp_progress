@@ -1,85 +1,93 @@
 R=R
-VERSION=0.3
-RDEVEL=rocker/r-devel
+VERSION=0.4
 RCHECKER=rcpp-rdevel
 NCPUS=4
 
 
+.PHONY: tests
 
 clean:
 	rm -f  src/*.o src/*.so */*~ *~ src/*.rds manual.pdf
-	rm -rf *.Rcheck/ checks .Rd2pdf*
-#	rm -f RcppProgress_$(VERSION).tar.gz
+	rm -rf lib
 	$(shell bash -c "shopt -s globstar && rm -f **/*.o **/*.so")
 
-build:
-	rm -f RcppProgress_*.tar.gz
-	Rscript -e 'devtools::build(".", "/tmp")'
-	
-install: build
-	$(R) CMD INSTALL /tmp/RcppProgress_*.tar.gz
+lib:
+	mkdir -p $@
+
+install: lib
+	$(R) -e 'pkg=devtools::build(".", "lib");install.packages(pkg, "lib")'
+
+coverage:
+	$(R) -e 'covr::package_coverage()'
+
+# tests require an installed package
+tests: clean install
+	R_LIBS=lib Rscript -e 'devtools::test()'
 
 test-RcppProgressArmadillo: install
 	R CMD INSTALL inst/examples/RcppProgressArmadillo/
 	Rscript test_rcpp_armadillo_example.R
 
-test-RcppProgressExample: install
-	R CMD INSTALL inst/examples/RcppProgressExample/
-	Rscript test_rcpp_example.R
+debug-RcppProgressExample: install
+	R_LIBS=lib Rscript -e 'devtools::load_all("inst/examples/RcppProgressExample", recompile = TRUE); RcppProgressExample:::test_multithreaded();'
 
-tests: test-RcppProgressExample test-RcppProgressArmadillo
+debug-RcppProgressETA: install
+	R_LIBS=lib Rscript -e 'devtools::load_all("inst/examples/RcppProgressETA", recompile = TRUE); RcppProgressETA:::test_sequential();'
 
-RcppProgress_$(VERSION).tar.gz: 
-	$(R) CMD build .
 
-TARBALL=$(wildcard /tmp/RcppProgress_*.tar.gz)
+
+
 
 check: clean
-	rm -f RcppProgress_*.tar.gz
-	$(R) CMD build .
-	$(R) CMD check -o /tmp --as-cran RcppProgress_*.tar.gz
-	rm -f RcppProgress_*.tar.gz
+	R -q -e 'devtools::check()'
+
+# check with Rdevel
+check-rdev: clean
+	Rdevel -q -e 'devtools::check()'
 
 doc:
 	$(R) CMD Rd2pdf -o manual.pdf .
 
-build-docker-checker:
+
+
+################## docker checker ##################################
+# directory in which the local dir is mounted inside the container
+DIR=/root/rcpp_progress
+DOCKER_RUN=docker run --rm -ti -v $(PWD):$(PWD) -w $(PWD) -u $$(id -u):$$(id -g) $(RCHECKER) 
+
+docker/build:
 	docker build -t $(RCHECKER) docker_checker
 
-RDEVEL=rocker/r-devel
-RCHECKER=rcpp-rdevel
+# check with r-base
+docker/check: 
+	#-docker rm  $(RCHECKER)
+	$(DOCKER_RUN) make check
 
-check_rhub_windows: build
-	Rscript -e 'rhub::check_on_windows("$(TARBALL)")'
+# check with r-devel
+docker/check-rdev: docker/build
+	#-docker rm  $(RCHECKER)
+	$(DOCKER_RUN) make check-rdev
 
+docker/run: 
+	#@-docker rm  $(RCHECKER)
+	$(DOCKER_RUN) bash
 
-#build_rchecker:
-#	docker pull $(RDEVEL)
-#	docker run --name $(RCHECKER) -ti -v $(PWD):/tmp/ -w /tmp -u docker $(RDEVEL) Rscript -e 'install.packages("Rcpp")'
-
-check-r-devel: build-docker-checker
-	-docker rm  $(RCHECKER)
-	docker run --name $(RCHECKER) -ti -v $(PWD):/root/rcpp_progress -w /root/rcpp_progress $(RCHECKER) make check
+docker/tests: 
+	#@-docker rm  $(RCHECKER)
+	$(DOCKER_RUN) make tests
 
 test-r-devel: 
 	-docker rm  $(RCHECKER)
-	docker run --name $(RCHECKER) -ti -v $(PWD):/root/rcpp_progress -w /root/rcpp_progress $(RCHECKER) make tests
+	$(DOCKER_RUN) make tests
+
+
+check_rhub_windows: build
+	Rscript -e 'rhub::check_on_windows("$(TARBALL)")'
 
 
 
 win-builder-upload: build
 	lftp  -u anonymous,karl.forner@gmail.com -e "set ftp:passive-mode true; cd R-release; put $(TARBALL); cd ../R-devel;  put $(TARBALL); bye" ftp://win-builder.r-project.org
 
-run-r-devel: RcppProgress_$(VERSION).tar.gz build-docker-checker
-	@-docker rm  $(RCHECKER)
-	docker run --name $(RCHECKER) -ti -v $(PWD):/root/ -w /root  $(RCHECKER) bash
-
-#fetch-dependent-packages:
-#	Rscript -e 'pkgs <- available.packages(); deps <- tools::package_dependencies("RcppProgress", pkgs, which = "all", reverse = TRUE)[[1]];download.packages(deps, ".")'
 
 
-check-rdevel-deps: RcppProgress_$(VERSION).tar.gz build-docker-checker 
-	-docker rm  $(RCHECKER)
-	-mkdir checks
-	cp RcppProgress_$(VERSION).tar.gz checks
-	docker run --rm --name $(RCHECKER) -ti -v $(PWD):/tmp/ -w /tmp -u docker $(RCHECKER) Rscript -e 'setwd("checks");library(tools);check_packages_in_dir(".", reverse=TRUE, Ncpus=$(NCPUS));summarize_check_packages_in_dir_results(".")'
