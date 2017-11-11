@@ -1,6 +1,0 @@
-v0.3
-
-* fixed bug where one extra final | could be printed.
-* refactored code by putting display code in class ProgressBar
-* fixed armadillo example warning.
-

@@ -25,12 +25,16 @@ multithreading in other ways.
   There are two tests functions provided by the package to get a quick overview
   of what can be done.
 
-  These tests are:
+ These tests are:
 
 \describe{
 \item{ RcppProgress:::test_sequential(max, nb, display_progress) }{ - a sequential code, i.e. single threaded }
 \item{ RcppProgress:::test_multithreaded(max, nb, threads, display_progress) }{ - a multithreaded code using OpenMP}
 }
+
+They both are wrappers for examples implemented in the RcppProgressExample package
+located in the \code{examples} directory of the RcppProgress installed package.
+
 
 Both tests call the very same function that implements a long computation.
 The \bold{max} parameter controls the number of computations, and \bold{nb} controls the duration of a single computation,
@@ -190,11 +194,9 @@ field of the package DESCRIPTION file.
 }
 
 \examples{
-	# these are implemented as examples inside RcppProgress
+	# these are implemented as examples inside RcppProgress provided
+	# example package: examples/RcppProgressExample
 	# check the source code
-
-	# the underlying test_sequential c++ function has a progress bar and is interruptible
-	RcppProgress:::test_sequential(100, 300, 4)
 
 	# the underlying test_test_multithreaded c++ function is multithreaded
 	# , has a progress bar and is still interruptible

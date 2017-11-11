@@ -1,7 +1,6 @@
 # RcppProgress
-[![Build Status](https://travis-ci.org/kforner/rcpp_progress.svg?branch=master)](https://travis-ci.org/kforner/rcpp_progress)
-[![codecov](https://codecov.io/github/kforner/rcpp_progress/coverage.svg)](https://codecov.io/github/kforner/rcpp_progress)
-
+[![Build Status](https://travis-ci.org/kforner/rcpp_progress.svg?branch=dev)](https://travis-ci.org/kforner/rcpp_progress?branch=dev)
+[![codecov](https://codecov.io/github/kforner/rcpp_progress/coverage.svg?branch=dev)](https://codecov.io/github/kforner/rcpp_progress?branch=dev)
 
 a R package that provides a c++ interruptible progress bar with OpenMP support for c++ code in R packages
 
@@ -23,5 +22,32 @@ R CMD INSTALL . in the console.
 
 ## Contribute
 Send me a pull request with at least one test or example
+
+
+## For developers
+
+### tests and check
+
+If you have all the RcppProgress dependencies (and suggests) installed:
+
+type:
+ - `make tests`: to run the tests
+ - `make check`: to check the package
+
+### docker-checker
+
+A Dockerfile (<docker_checker/Dockerfile>) is provided to help building the
+dev environment (built on rocker/r-devel) in which to develop
+and test RcppProgress.
+
+type:
+
+ - `make docker/build`: to build the docker
+ - `make docker/run`: to run a shell in the docker with the current dir mounted
+ 	inside
+ - `make docker/check`: to check the package inside the docker
+ - `make docker/tests`: to run test tests of the package inside the docker
+
+
 
 
