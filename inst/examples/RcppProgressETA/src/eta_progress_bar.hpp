@@ -92,7 +92,7 @@ public: // ===== main methods =====
       std::string pas = pas_strs.str();
 
 		  std::stringstream strs;
-		  strs << "| " << "⌛ " << rem << " (" << pas << ")\n";
+		  strs << "| " << rem << " (" << pas << ")\n";
 		  std::string temp_str = strs.str();
 		  char const* char_type = temp_str.c_str();
 
