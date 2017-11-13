@@ -10,7 +10,7 @@
 #define _RcppProgress_ETA_PROGRESS_BAR_HPP
 
 #include <R_ext/Print.h>
-#include <time.h>
+#include <ctime>
 #include <stdio.h>
 #include <sstream>
 #include <string.h>
