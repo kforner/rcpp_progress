@@ -10,8 +10,8 @@ before_install:
   - sudo apt-get install r-cran-rcpparmadillo -y
   - sudo apt-get install r-cran-testthat -y
 
-before_script:
-  - make tests
+#before_script:
+#  - make tests
 
 r_github_packages:
   - jimhester/covr
