@@ -1,7 +1,14 @@
 language: r
 cache: packages
+sudo: true
 
 pandoc: false
+
+before_install:
+  # RcppArmadillo
+  - sudo apt-get update -y 
+  - sudo apt-get install r-cran-rcpparmadillo -y
+  - sudo apt-get install r-cran-testthat -y
 
 #before_script:
 #  - make tests
