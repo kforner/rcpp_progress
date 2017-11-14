@@ -81,9 +81,8 @@ test-r-devel:
 	$(DOCKER_RUN) make tests
 
 
-check_rhub_windows: build
-	Rscript -e 'rhub::check_on_windows("$(TARBALL)")'
-
+check_rhub_windows: 
+	XDG_DATA_HOME=$(PWD) Rscript -e 'rhub::check_on_windows()'
 
 
 win-builder-upload: build
