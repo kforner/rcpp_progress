@@ -48,6 +48,11 @@ type:
  - `make docker/check`: to check the package inside the docker
  - `make docker/tests`: to run test tests of the package inside the docker
 
+### test on windows using rhub
 
+```
+make docker/run
+make check_rhub_windows
+```
 
 
