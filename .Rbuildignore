@@ -8,4 +8,5 @@ lib
 ^\..+
 \.o
 \.so
+rhub
 
