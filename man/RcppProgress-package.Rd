@@ -200,7 +200,7 @@ field of the package DESCRIPTION file.
 
 	# the underlying test_test_multithreaded c++ function is multithreaded
 	# , has a progress bar and is still interruptible
-	RcppProgress:::test_multithreaded(nb = 300, threads = 4)
+	RcppProgress:::test_multithreaded(nb = 300, threads = 4, recompile = TRUE)
 }
 
 \keyword{ package }
