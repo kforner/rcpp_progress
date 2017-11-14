@@ -37,12 +37,21 @@ public:
     monitor_singleton() = new InterruptableProgressMonitor(max, display_progress, pb);
 	}
 
-	~Progress() {
-		delete monitor_singleton();
-		monitor_singleton() = 0;
-	}
+	~Progress() { cleanup(); 	}
 
 public: // ==== USER INTERFACE =====
+	/**
+	 * cleanup
+	 *
+	 *  should normally not be called, unless a something bad happens (
+	 *  a process/thread that crashes).
+	 *
+	 */
+	void cleanup() {
+    if (monitor_singleton() != 0) delete monitor_singleton();
+    monitor_singleton() = 0;
+	}
+
 	/**
 	 * increment the current progress.
 	 *
