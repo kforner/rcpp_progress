@@ -1,4 +1,5 @@
 R=R
+RSCRIPT=Rscript
 VERSION=0.4
 RCHECKER=rcpp-rdevel
 NCPUS=4
@@ -22,32 +23,32 @@ coverage:
 
 # tests require an installed package
 tests: clean install
-	R_LIBS=lib Rscript -e 'devtools::test()'
+	R_LIBS=lib $(RSCRIPT) -e 'devtools::test()'
 
 test-RcppProgressArmadillo: install
 	R CMD INSTALL inst/examples/RcppProgressArmadillo/
 	Rscript test_rcpp_armadillo_example.R
 
 debug-RcppProgressExample: install
-	R_LIBS=lib Rscript -e 'devtools::load_all("inst/examples/RcppProgressExample", recompile = TRUE); RcppProgressExample:::test_multithreaded();'
+	R_LIBS=lib $(RSCRIPT) -e 'devtools::load_all("inst/examples/RcppProgressExample", recompile = TRUE); RcppProgressExample:::test_multithreaded();'
 
 debug-RcppProgressETA: install
-	R_LIBS=lib Rscript -e 'devtools::load_all("inst/examples/RcppProgressETA", recompile = TRUE); RcppProgressETA:::test_sequential();'
+	R_LIBS=lib $(RSCRIPT) -e 'devtools::load_all("inst/examples/RcppProgressETA", recompile = TRUE); RcppProgressETA:::test_sequential();'
 
 
-
+build:
+	$(R) CMD build .
 
 
 check: clean
-	R -q -e 'devtools::check()'
+	$(R) -q -e 'devtools::check()'
 
 # check with Rdevel
 check-rdev: clean
-	Rdevel -q -e 'devtools::check()'
+	$(R) -q -e 'devtools::check()'
 
 doc:
 	$(R) CMD Rd2pdf -o manual.pdf .
-
 
 
 ################## docker checker ##################################
@@ -82,11 +83,11 @@ test-r-devel:
 
 
 check_rhub_windows: 
-	XDG_DATA_HOME=$(PWD) Rscript -e 'rhub::check_on_windows()'
+	XDG_DATA_HOME=$(PWD) $(RSCRIPT) -e 'rhub::check_on_windows()'
 
 
 win-builder-upload: build
-	lftp  -u anonymous,karl.forner@gmail.com -e "set ftp:passive-mode true; cd R-release; put $(TARBALL); cd ../R-devel;  put $(TARBALL); bye" ftp://win-builder.r-project.org
+	lftp  -u anonymous,karl.forner@gmail.com -e "set ftp:passive-mode true; cd R-release; mput *.tar.gz; cd ../R-devel;  mput *.tar.gz; bye" ftp://win-builder.r-project.org
 
 
 
