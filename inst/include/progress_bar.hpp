@@ -25,6 +25,6 @@ class ProgressBar {
     virtual void end_display() = 0;
 };
 
-ProgressBar::~ProgressBar() {}
+inline ProgressBar::~ProgressBar() {}
 
 #endif
