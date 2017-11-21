@@ -9,7 +9,7 @@ NCPUS=4
 
 clean:
 	rm -f  src/*.o src/*.so */*~ *~ src/*.rds manual.pdf
-	rm -rf lib
+	#rm -rf lib
 	$(shell bash -c "shopt -s globstar && rm -f **/*.o **/*.so")
 
 lib:
