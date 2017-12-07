@@ -19,7 +19,7 @@
 
 // for unices only
 #if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
-  #include <Rinterface.h>
+#include <Rinterface.h>
 #endif
 
 class ETAProgressBar: public ProgressBar{
@@ -83,9 +83,9 @@ class ETAProgressBar: public ProgressBar{
           REprintf("%s", char_type);
           REprintf("\r");
           
-          #if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
-            R_FlushConsole();
-          #endif
+#if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
+          R_FlushConsole();
+#endif
           R_CheckUserInterrupt();
           
           // finalize display when ready
@@ -168,9 +168,9 @@ class ETAProgressBar: public ProgressBar{
         
         // N.B: does nothing on windows
         void flush_console() {
-          #if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
-            R_FlushConsole();
-          #endif
+#if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
+          R_FlushConsole();
+#endif
         }
         
         private: // ===== INSTANCE VARIABLES ====
