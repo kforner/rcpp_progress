@@ -47,15 +47,20 @@ class ETAProgressBar: public ProgressBar{
         flush_console();
       }
       
-      // will finalize display if needed
+      // update display
       void update(float progress) {
         
-        // condition to manage time measurement
+        // stop if already finalized
+        if (_finalized) return;
+        
+        // start time measurement when update() is called the first time
         if (_timer_flag) {
           _timer_flag = false;
+          // measure start time
           time(&start);
-        } else if ((progress > 0.001) & !_finalized) {
+        } else {
           
+          // measure current time
           time(&end);
           
           // calculate passed time and remaining time (in seconds)
