@@ -88,11 +88,6 @@ class ETAProgressBar: public ProgressBar{
           REprintf("%s", char_type);
           REprintf("\r");
           
-#if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
-          R_FlushConsole();
-#endif
-          R_CheckUserInterrupt();
-          
           // finalize display when ready
           if(progress == 1) {
             _finalize_display();
