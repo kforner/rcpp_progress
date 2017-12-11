@@ -86,7 +86,6 @@ class ETAProgressBar: public ProgressBar{
           // print: remove old and replace with new
           REprintf("\r");
           REprintf("%s", char_type);
-          REprintf("\r");
           
           // finalize display when ready
           if(progress == 1) {
