@@ -1,7 +1,7 @@
 /*
  * eta_progress_bar.hpp
  *
- * A custom ProgressBar class to display a vertical progress bar with time estimation
+ * A custom ProgressBar class to display a progress bar with time estimation
  *
  * Author: clemens@nevrome.de
  *
@@ -30,9 +30,7 @@ class ETAProgressBar: public ProgressBar{
     */
     ETAProgressBar()  {
       _max_ticks = 50;
-      _ticks_displayed = 0;
       _finalized = false;
-      _mode_flag = 1;
       _timer_flag = true;
     }
     
@@ -98,87 +96,84 @@ class ETAProgressBar: public ProgressBar{
         update(1);
       }
       
+    protected: // ==== other instance methods =====
       
-      protected: // ==== other instance methods =====
+      // convert double with seconds to time string
+      std::string _time_to_string(double seconds) {
         
-        // convert double with seconds to time string
-        std::string _time_to_string(double seconds) {
-          
-          int time = (int) seconds;
-          
-          int hour = 0;
-          int min = 0;
-          int sec = 0;
-          
-          hour = time / 3600;
-          time = time % 3600;
-          min = time / 60;
-          time = time % 60;
-          sec = time;
-          
-          std::stringstream time_strs;
-          if (hour != 0) time_strs << hour << "h ";
-          if (min != 0) time_strs << min << "min ";
-          if (sec != 0) time_strs << sec << "s ";
-          std::string time_str = time_strs.str();
-          
-          return time_str;
-        }
+        int time = (int) seconds;
         
-        // update the ticks display corresponding to progress
-        std::string _current_ticks_display(float progress) {
-          
-          int nb_ticks = _compute_nb_ticks(progress);
-          
-          std::string cur_display = _construct_ticks_display_string(nb_ticks);
-          
-          return cur_display;
-        }
+        int hour = 0;
+        int min = 0;
+        int sec = 0;
         
-        // construct progress bar display
-        std::string _construct_ticks_display_string(int nb) {
-          
-          std::stringstream ticks_strs;
-          for (int i = 0; i < (_max_ticks - 1); ++i) {
-            if (i < nb) {
-              ticks_strs << "*";
-            } else {
-              ticks_strs << " ";
-            }
+        hour = time / 3600;
+        time = time % 3600;
+        min = time / 60;
+        time = time % 60;
+        sec = time;
+        
+        std::stringstream time_strs;
+        if (hour != 0) time_strs << hour << "h ";
+        if (min != 0) time_strs << min << "min ";
+        if (sec != 0) time_strs << sec << "s ";
+        std::string time_str = time_strs.str();
+        
+        return time_str;
+      }
+      
+      // update the ticks display corresponding to progress
+      std::string _current_ticks_display(float progress) {
+        
+        int nb_ticks = _compute_nb_ticks(progress);
+        
+        std::string cur_display = _construct_ticks_display_string(nb_ticks);
+        
+        return cur_display;
+      }
+      
+      // construct progress bar display
+      std::string _construct_ticks_display_string(int nb) {
+        
+        std::stringstream ticks_strs;
+        for (int i = 0; i < (_max_ticks - 1); ++i) {
+          if (i < nb) {
+            ticks_strs << "*";
+          } else {
+            ticks_strs << " ";
           }
-          std::string tick_space_string = ticks_strs.str();
-          
-          return tick_space_string;
         }
+        std::string tick_space_string = ticks_strs.str();
         
-        // finalize
-        void _finalize_display() {
-          if (_finalized) return;
-          
-          REprintf("\n");
-          flush_console();
-          _finalized = true;
-        }
+        return tick_space_string;
+      }
+      
+      // finalize
+      void _finalize_display() {
+        if (_finalized) return;
         
-        // compute number of ticks according to progress
-        int _compute_nb_ticks(float progress) {
-          return int(progress * _max_ticks);
-        }
-        
-        // N.B: does nothing on windows
-        void flush_console() {
+        REprintf("\n");
+        flush_console();
+        _finalized = true;
+      }
+      
+      // compute number of ticks according to progress
+      int _compute_nb_ticks(float progress) {
+        return int(progress * _max_ticks);
+      }
+      
+      // N.B: does nothing on windows
+      void flush_console() {
 #if !defined(WIN32) && !defined(__WIN32) && !defined(__WIN32__)
-          R_FlushConsole();
+        R_FlushConsole();
 #endif
-        }
+      }
         
-        private: // ===== INSTANCE VARIABLES ====
-          int _max_ticks;   		// the total number of ticks to print
-          int _ticks_displayed; 	// the nb of ticks already displayed
-          bool _finalized;
-          int _mode_flag;
-          bool _timer_flag;
-          time_t start,end;
+    private: // ===== INSTANCE VARIABLES ====
+      int _max_ticks;   		// the total number of ticks to print
+      bool _finalized;
+      bool _timer_flag;
+      time_t start,end;
           
 };
 
