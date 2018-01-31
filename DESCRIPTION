@@ -16,5 +16,6 @@ Date: 2017-11-14
 Suggests:
 	RcppArmadillo,
 	devtools,
+	roxygen2,
 	testthat
 RoxygenNote: 6.0.1
