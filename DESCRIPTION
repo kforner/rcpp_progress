@@ -15,9 +15,8 @@ Version: 0.4
 Date: 2017-11-14
 Imports:
 	Rcpp (>= 0.9.4),
-	devtools
 Suggests:
 	RcppArmadillo,
-	roxygen2,
+	devtools,
 	testthat
 RoxygenNote: 6.0.1
