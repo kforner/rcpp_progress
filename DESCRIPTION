@@ -13,8 +13,6 @@ URL: https://github.com/kforner/rcpp_progress
 BugReports: https://github.com/kforner/rcpp_progress/issues
 Version: 0.4
 Date: 2017-11-14
-Imports:
-	Rcpp (>= 0.9.4),
 Suggests:
 	RcppArmadillo,
 	devtools,
