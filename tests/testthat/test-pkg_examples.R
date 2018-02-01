@@ -1,4 +1,3 @@
-library(RcppProgress)
 source("wrap_examples.R")
 
 context('RcppProgressExample sequential\n')
