@@ -16,7 +16,7 @@ lib:
 	mkdir -p $@
 
 install: lib
-	$(R) -e 'pkg=devtools::build(".", "lib");install.packages(pkg, "lib")'
+	$(R) -e 'pkg=devtools::build(".", "lib");install.packages(pkg, "lib", INSTALL_opts = "--install-tests")'
 
 coverage:
 	$(R) -e 'covr::package_coverage()'
