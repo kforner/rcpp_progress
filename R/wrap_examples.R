@@ -1,6 +1,10 @@
-load_my_example_pkg <- function(pkg, recompile = TRUE, ...) {
-  path <- system.file(file.path('examples', pkg), package = 'RcppProgress')
-  load_all(path, quiet = TRUE, recompile = recompile, ...)
+load_my_example_pkg <- function(pkg, ...) {
+  from <- system.file(file.path('examples', pkg), package = 'RcppProgress')
+  dir <- tempfile()
+  dir.create(dir)
+  file.copy(from, dir, recursive = TRUE)
+  path <- file.path(dir, pkg)
+  load_all(path, quiet = TRUE, ...)
 }
 
 get_function_from_pkg <- function(pkg, fun) {
