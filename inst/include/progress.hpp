@@ -31,9 +31,9 @@ public:
 	  bool display_progress = true,
     ProgressBar& pb = default_progress_bar()
   ) {
-    if ( monitor_singleton() != 0) { // something is wrong, two simultaneous Progress monitoring
-      Rf_error("ERROR: there is already an InterruptableProgressMonitor instance defined");
-    }
+    //if ( monitor_singleton() != 0) { // something is wrong, two simultaneous Progress monitoring
+      //Rf_error("ERROR: there is already an InterruptableProgressMonitor instance defined");
+    //}
     monitor_singleton() = new InterruptableProgressMonitor(max, display_progress, pb);
 	}
 
