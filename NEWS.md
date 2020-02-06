@@ -1,3 +1,10 @@
+# RcppProgress 0.4.2
+
+- the constructor now clears out any existing Progress instance. That fixes some problems with recent
+  versions of R that seem able sometimes to intercept the interrupt at the R level, 
+  cf https://github.com/kforner/rcpp_progress/issues/4
+
+
 # RcppProgress 0.4
 
   - RccpProgress now can use custom Progress Bars (draft by Clemens Schmid @nevrome)
