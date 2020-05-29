@@ -29,9 +29,22 @@ Just install it the usual way.
 If you want more control, unarchive it, cd to the source directory, then type
 R CMD INSTALL . in the console.
 
+## Feedback
+
+Please use github issues to provide feedback, report bugs and propose new features.
 
 ## Contribute
-Send me a pull request with at least one test or example
+
+Contributions are welcome!
+The proposed process is:
+
+- open an issue and propose your changes
+- fork the project
+- do a merge request
+- code review
+- merge into master
+
+New code must be tested and documented, and also come with an example.
 
 
 ## For developers
