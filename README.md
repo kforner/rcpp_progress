@@ -3,7 +3,16 @@
 [![codecov](https://codecov.io/github/kforner/rcpp_progress/coverage.svg?branch=dev)](https://codecov.io/github/kforner/rcpp_progress?branch=dev)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RcppProgress)](https://cran.r-project.org/package=RcppProgress)
 
-a R package that provides a c++ interruptible progress bar with OpenMP support for c++ code in R packages
+a R package that provides a c++ interruptible progress bar with OpenMP support for c++ code in R packages:
+
+- check for user interrupts in your c++ code
+- display a progress bar monitoring your c++ computation
+- compatible with multi-threaded c++ code (e.g. openMP)
+
+## Installing
+
+- from CRAN: `install.packages("RcppProgress")`
+- from github: `remotes::install_github('kforner/rcpp_progress')`
 
 ## example
 see a detailed example on Rcpp Gallery:
