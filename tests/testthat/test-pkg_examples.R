@@ -1,5 +1,3 @@
-source("wrap_examples.R")
-
 context('RcppProgressExample sequential\n')
 
 .test_sequential <- function() {
