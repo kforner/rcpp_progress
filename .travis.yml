@@ -3,8 +3,8 @@ cache: packages
 
 pandoc: false
 
-#before_script:
-#  - make tests
+before_script:
+  - make tests
 
 r_github_packages:
   - jimhester/covr
