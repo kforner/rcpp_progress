@@ -7,5 +7,5 @@ CxxFlags <- function()
       path <- utils::shortPathName(path)
     path <- gsub("\\\\", "/", path)
   }
-  paste0("-I", path)
+  cat(paste0("-I", path))
 }
