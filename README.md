@@ -1,3 +1,8 @@
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/kforner/rcpp_progress/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kforner/rcpp_progress/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+
 # RcppProgress
 [![Build Status](https://travis-ci.org/kforner/rcpp_progress.svg?branch=dev)](https://travis-ci.org/kforner/rcpp_progress?branch=dev)
 [![codecov](https://codecov.io/github/kforner/rcpp_progress/coverage.svg?branch=dev)](https://codecov.io/github/kforner/rcpp_progress?branch=dev)
