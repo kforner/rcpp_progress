@@ -73,6 +73,10 @@ docker/run:
 	#@-docker rm  $(RCHECKER)
 	$(DOCKER_RUN) bash
 
+docker/run/root: 
+	#@-docker rm  $(RCHECKER)
+	docker run --rm -ti -u root $(RCHECKER) bash
+
 docker/tests: 
 	#@-docker rm  $(RCHECKER)
 	$(DOCKER_RUN) make tests
