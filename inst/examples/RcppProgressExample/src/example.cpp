@@ -42,10 +42,11 @@ double test_sequential(int max, int nb, bool display_progress) {
   return sum3;
 }
 
-void test_multithreaded_omp(int max, int nb, int threads, bool display_progress) {
+double test_multithreaded_omp(int max, int nb, int threads, bool display_progress) {
+  std::vector<double> res_by_task(max);
 #ifdef _OPENMP
 	if (threads > 0)
-		omp_set_num_threads( threads );
+		omp_set_num_threads(threads);
 	REprintf("Number of threads=%i\n", omp_get_max_threads());
 #endif
 
@@ -57,9 +58,15 @@ void test_multithreaded_omp(int max, int nb, int threads, bool display_progress)
     // N.B: you can not exit an OpenMP loop with a `return` otherwise you get a:
     // "error: invalid exit from OpenMP structured block" error 
 		if ( p.increment() ) { // the only way to exit an OpenMP loop
-			compute_more_and_check_interruption(nb);
+			res_by_task[i] = compute_more_and_check_interruption(nb);
 		}
 	}
+
+  if (p.is_aborted()) return -1;
+
+  double res = 0;
+  for (int i = 0; i < max; ++i) res += res_by_task[i];
+  return res;
 }
 
 // Rcpp wrapper for the test_sequential() example function
@@ -70,6 +77,6 @@ RcppExport SEXP test_sequential_wrapper(SEXP __max, SEXP __nb, SEXP __display_pr
 
 // Rcpp wrapper for the test_multithreaded_omp() example function
 RcppExport SEXP test_multithreaded_wrapper(SEXP __max, SEXP __nb, SEXP __threads, SEXP __display_progress) {
-	test_multithreaded_omp(as<unsigned long>(__max), as<int>(__nb), as<int>(__threads), as<bool>(__display_progress));
-	return R_NilValue;
+	double res = test_multithreaded_omp(as<unsigned long>(__max), as<int>(__nb), as<int>(__threads), as<bool>(__display_progress));
+	return wrap(res);
 }
