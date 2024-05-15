@@ -18,5 +18,5 @@ Suggests:
 	devtools,
 	roxygen2,
 	testthat
-RoxygenNote: 6.1.1
+RoxygenNote: 7.3.1
 Encoding: UTF-8

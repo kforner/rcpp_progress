@@ -1,30 +1,27 @@
-source("wrap_examples.R")
 
-context('RcppProgressExample sequential\n')
+# RcppProgressExample pakcage
+test_that("RcppProgressExample", {
 
-.test_sequential <- function() {
-  expect_error(test_sequential(nb = 500), NA)
-}
-test_that("test_sequential", .test_sequential())
+  ### sequential
+  expect_error(res1 <- test_sequential(1, 1000, FALSE), NA)
+  
+  expect_error(res2 <- test_sequential(10, 1000, TRUE), NA)
+  expect_equal(res2, 10*res1)
 
-
-context('RcppProgressExample multithreaded\n')
-.test_multithreaded <- function() {
+  ### multithreaded
   expect_error(test_multithreaded(nb = 1000, threads = 4), NA)
-}
-test_that("test_multithreaded", .test_multithreaded())
+
+})
+
+test_that("test_multithreaded", {
+  expect_error(test_multithreaded(nb = 1000, threads = 4), NA)
+})
+
+test_that("amardillo_multithreaded", {
+  expect_error(test_amardillo_multithreaded(nb = 1000, threads = 4), NA)
+})
 
 
-context('RcppProgressArmadillo multithreaded\n')
-.amardillo_multithreaded <- function() {
-  expect_error(amardillo_multithreaded(nb = 1000, threads = 4), NA)
-}
-test_that("amardillo_multithreaded", .amardillo_multithreaded())
-
-
-
-context('RcppProgressETA:custom progress bar\n')
-.eta_progress_bar <- function() {
-  expect_error(eta_progress_bar(nb = 1000), NA)
-}
-test_that("eta_progress_bar", .eta_progress_bar())
+test_that("eta_progress_bar", {
+  expect_error(test_eta_progress_bar(nb = 1000), NA)
+})

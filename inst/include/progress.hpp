@@ -76,7 +76,7 @@ public: // ==== USER INTERFACE =====
 
 	/**
 	 * return if the computation has been aborted.
-	 * N.B: do not perform any check by itselfd
+	 * N.B: do not perform any check by itself
 	 */
 	bool is_aborted() const { return monitor().is_aborted(); }
 

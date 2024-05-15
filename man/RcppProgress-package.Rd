@@ -28,8 +28,8 @@ multithreading in other ways.
  These tests are:
 
 \describe{
-\item{ RcppProgress:::test_sequential(max, nb, display_progress) }{ - a sequential code, i.e. single threaded }
-\item{ RcppProgress:::test_multithreaded(max, nb, threads, display_progress) }{ - a multithreaded code using OpenMP}
+\item{ test_sequential(max, nb, display_progress) }{ - a sequential code, i.e. single threaded }
+\item{ test_multithreaded(max, nb, threads, display_progress) }{ - a multithreaded code using OpenMP}
 }
 
 They both are wrappers for examples implemented in the RcppProgressExample package
@@ -44,7 +44,7 @@ The \bold{progress} parameter toggles the display of the progress bar.
 
 On my platform,
 \preformatted{
-system.time( RcppProgress:::test_multithreaded(100, 3000, 4) )
+system.time( test_multithreaded(100, 3000, 4) )
 }
 is a good start.
 
@@ -138,10 +138,10 @@ LinkingTo: Rcpp, RcppProgress
 
 \item{ MakeVars }{ edit \bold{src/MakeVars} and replace its content by
 
-PKG_LIBS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(SHLIB_OPENMP_CXXFLAGS) `$(R_HOME)/bin/Rscript -e "RcppProgress:::CxxFlags()"`
+PKG_LIBS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(SHLIB_OPENMP_CXXFLAGS)
 and
 
-PKG_CXXFLAGS +=-Ilibsrc $(SHLIB_OPENMP_CXXFLAGS) `$(R_HOME)/bin/Rscript -e "RcppProgress:::CxxFlags()"`
+PKG_CXXFLAGS +=-Ilibsrc $(SHLIB_OPENMP_CXXFLAGS)
 
 }
 
@@ -201,7 +201,7 @@ field of the package DESCRIPTION file.
 	# the underlying test_test_multithreaded c++ function is multithreaded
 	# , has a progress bar and is still interruptible
 	\dontrun{
-	  RcppProgress:::test_multithreaded(nb = 300, threads = 4, recompile = TRUE)
+	  test_multithreaded(nb = 300, threads = 4)
 	}
 }
 

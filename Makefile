@@ -22,23 +22,28 @@ coverage:
 	$(R) -e 'covr::package_coverage()'
 
 # tests require an installed package
-tests: clean install
+tests: clean rox install
 	R_LIBS=lib $(RSCRIPT) -e 'devtools::test()'
 
 test-RcppProgressArmadillo: install
 	R CMD INSTALL inst/examples/RcppProgressArmadillo/
 	Rscript test_rcpp_armadillo_example.R
 
+### useful to troubleshoot compilation problems inside the example packages
 debug-RcppProgressExample: install
-	R_LIBS=lib $(RSCRIPT) -e 'devtools::load_all("inst/examples/RcppProgressExample", recompile = TRUE); RcppProgressExample:::test_multithreaded();'
+	R_LIBS=lib $(RSCRIPT) -e 'devtools::load_all("inst/examples/RcppProgressExample", recompile = TRUE); RcppProgressExample:::test_multithreaded(1000);'
 
 debug-RcppProgressETA: install
-	R_LIBS=lib $(RSCRIPT) -e 'devtools::load_all("inst/examples/RcppProgressETA", recompile = TRUE); RcppProgressETA:::test_sequential();'
+	R_LIBS=lib $(RSCRIPT) -e 'devtools::load_all("inst/examples/RcppProgressETA", recompile = TRUE); RcppProgressETA:::test_multithreaded(1000);'
 
+debug-RcppProgressArmadillo: install
+	R_LIBS=lib $(RSCRIPT) -e 'devtools::load_all("inst/examples/RcppProgressArmadillo", recompile = TRUE); RcppProgressArmadillo:::test_multithreaded(1000);'
 
 build:
 	$(R) CMD build .
 
+rox: 
+	$(R) -q -e 'roxygen2::roxygenise(load = "source")'
 
 check: clean
 	$(R) -q -e 'devtools::check()'
@@ -48,6 +53,7 @@ check-rdev: clean
 	$(R) -q -e 'devtools::check()'
 
 doc:
+	@rm -f manual.pdf
 	$(R) CMD Rd2pdf -o manual.pdf .
 
 
