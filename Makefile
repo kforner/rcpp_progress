@@ -56,6 +56,8 @@ doc:
 	@rm -f manual.pdf
 	$(R) CMD Rd2pdf -o manual.pdf .
 
+pkgdown: rox
+	Rscript --no-save -e 'pkgdown::build_site()'
 
 ################## docker checker ##################################
 # directory in which the local dir is mounted inside the container
