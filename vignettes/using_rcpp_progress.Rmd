@@ -1,0 +1,238 @@
+---
+title: Using RcppProgress to control the long computations in C++
+output: rmarkdown::html_vignette
+toc: true
+vignette: >
+  %\VignetteIndexEntry{why would you need srcpkgs?}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+
+---
+
+ Suppose that you have this `long_computation()` C++ function that you call from R using Rcpp:
+
+```{r long_computation, engine="Rcpp"}
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+// [[Rcpp::export]]
+double long_computation(int nb) {
+    double sum = 0;
+    for (int i = 0; i < nb; ++i) {
+        for (int j = 0; j < nb; ++j) {
+	    sum += R::dlnorm(i+j, 0.0, 1.0, 0);
+	}
+    }
+    return sum + nb;
+}
+```
+
+```{r long_computation_call}
+system.time(res  <- long_computation(1000))
+print(res)
+```
+
+
+## Checking for user interrupts
+
+Let's modify our code to add a check for user interruption by calling the function
+`Progress::check_abort()`.  Note the `Rcpp::depends(RcppProgress)` attribute in
+the header part that takes care of the include path for the *progress.hpp*
+header.
+
+Now the `long_computation_interruptible()` call is interruptible (e.g. by typing CTRL+C in the
+classic R console).
+
+```{r long_computation_interruptible, engine="Rcpp"}
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+// [[Rcpp::export]]
+double long_computation_interruptible(int nb) {
+    double sum = 0;
+    Progress p(0, false); // we need an instance, should be improved in next version
+    for (int i = 0; i < nb; ++i) {
+        if (Progress::check_abort() )
+            return -1.0;
+  	for (int j = 0; j < nb; ++j) {
+	    sum += R::dlnorm(i+j, 0.0, 1.0, 0);
+	}
+    }
+    return sum + nb;
+}
+```
+
+```{r long_computation_interruptible_call}
+system.time(res  <- long_computation_interruptible(3000)) # interrupt me
+print(res)
+```
+
+You may wonder why we put the `check_abort()` call in the first loop instead
+that in the second.  The performance cost of this call is not negligible. 
+It should be put in a place called often enough (like once per second) 
+yet not too often to minimize the overhead.
+
+## Adding a progress bar
+  
+Time to add the progress bar. The `Progress::increment()` function is quite fast, so we
+can put it in the second loop.  In real life example, it is sufficient to put
+it at a place called at least every second.
+ 
+```{r long_computation_progress, engine="Rcpp"}
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
+// [[Rcpp::export]]
+double long_computation_progress(int nb, bool display_progress=true) {
+    double sum = 0;
+    Progress p(nb*nb, display_progress);
+    for (int i = 0; i < nb; ++i) {
+        if (Progress::check_abort() )
+            return -1.0;
+        for (int j = 0; j < nb; ++j) {
+            p.increment(); // update progress
+	    sum += R::dlnorm(i+j, 0.0, 1.0, 0);
+	}
+    }
+    return sum + nb;
+}
+```
+
+```{r long_computation_progress_call}
+system.time(res  <- long_computation_progress(3000)) # interrupt me
+print(res)
+```
+
+## OpenMP support
+
+First we need this to enable OpenMP support for `gcc`. In the early days we used
+
+```
+Sys.setenv("PKG_CXXFLAGS"="-fopenmp")
+Sys.setenv("PKG_LIBS"="-fopenmp")
+```
+
+and more recent version of Rcpp have a plugin  which does this for us.
+
+Here is an OpenMP version of our function:
+
+```{r long_computation_omp, engine="Rcpp"}
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+// [[Rcpp::export]]
+double long_computation_omp(int nb, int threads=1) {
+#ifdef _OPENMP
+    if ( threads > 0 )
+        omp_set_num_threads( threads );
+    REprintf("Number of threads=%i\n", omp_get_max_threads());
+#endif
+ 
+    double sum = 0;
+#pragma omp parallel for schedule(dynamic)   
+    for (int i = 0; i < nb; ++i) {
+        double thread_sum = 0;
+  	for (int j = 0; j < nb; ++j) {
+	    thread_sum += R::dlnorm(i+j, 0.0, 1.0, 0);
+	}
+        sum += thread_sum;
+    }
+    return sum + nb;
+}
+```
+
+Now check that it is parallelized. The execution time for the first call that uses 4 threads should
+be much faster (~ 3 times faster on my computer) than the call with one single thread:
+
+```{r long_computation_omp_call}
+system.time(res4 <- long_computation_omp(5000, 4))
+print(res4)
+system.time(res1 <- long_computation_omp(5000, 1))
+print(res1)
+```
+
+## adding progress monitoring to the openMP function
+
+```{r long_computation_omp_progress, engine="Rcpp", eval=FALSE}
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
+// [[Rcpp::export]]
+double long_computation_omp_progress(const int nb, int threads=1) {
+#ifdef _OPENMP
+    if ( threads > 0 )
+        omp_set_num_threads( threads );
+#endif
+    Progress p(nb, true);
+    double sum = 0;
+#pragma omp parallel for default(none) reduction(+ : sum) schedule(dynamic)
+    for (int i = 0; i < nb; ++i) {
+        double thread_sum = 0;
+        if ( ! Progress::check_abort() ) {
+            p.increment(); // update progress
+            for (int j = 0; j < nb; ++j) {
+                thread_sum += R::dlnorm(i+j, 0.0, 1.0, 0);
+            }
+        }
+        sum += thread_sum;
+    }
+    return sum + nb;
+}
+```
+
+```{r long_computation_omp_progress_call, eval=FALSE}
+system.time(long_computation_omp_progress(5000, 4))
+```
+
+## Test it now
+
+If you want to test it now in your R console, just paste the following code
+(after installing **RcppProgress** of course):
+
+```{r final_example, eval=TRUE}
+CODE <- r"(
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
+
+// [[Rcpp::export]]
+double long_computation_omp_progress(int nb, int threads=1) {
+#ifdef _OPENMP
+    if ( threads > 0 )
+        omp_set_num_threads( threads );
+#endif
+    Progress p(nb, true);
+    double sum = 0;
+#pragma omp parallel for schedule(dynamic)   
+    for (int i = 0; i < nb; ++i) {
+        double thread_sum = 0;
+        if ( ! Progress::check_abort() ) {
+            p.increment(); // update progress
+            for (int j = 0; j < nb; ++j) {
+                thread_sum += R::dlnorm(i+j, 0.0, 1.0, 0);
+            }
+        }
+        sum += thread_sum;
+    }
+  
+    return sum + nb;
+}
+)"
+```
+
+and run
+
+```{r final_example_call}
+Rcpp::sourceCpp(code = CODE)
+res <- long_computation_omp_progress(10000, 4)
+```
+

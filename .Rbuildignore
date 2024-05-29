@@ -12,3 +12,6 @@ rhub
 manual.pdf
 
 ^\.github$
+^doc$
+^Meta$
+^docs$

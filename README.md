@@ -1,6 +1,7 @@
 
 
-# RcppProgress
+RcppProgress
+==============
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/kforner/rcpp_progress/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kforner/rcpp_progress/actions/workflows/R-CMD-check.yaml)
@@ -8,23 +9,59 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RcppProgress)](https://cran.r-project.org/package=RcppProgress)
 <!-- badges: end -->
 
+a R package that provides a C++ interruptible progress bar with OpenMP support for C++ code in R packages:
 
+- check for user interrupts in your C++ code
+- display a progress bar monitoring your C++ computation
+- compatible with multi-threaded C++ code (e.g. [openMP](https://www.openmp.org/))
 
+## Overview
 
-a R package that provides a c++ interruptible progress bar with OpenMP support for c++ code in R packages:
+Usually you write C++ code with R when you want to speedup some calculations.
+Depending on the parameters, and especially during the development, it is
+difficult to anticipate the execution time of your computation, so that you
+do not know if you have to wait for one minute or several hours.
 
-- check for user interrupts in your c++ code
-- display a progress bar monitoring your c++ computation
-- compatible with multi-threaded c++ code (e.g. openMP)
+RcppProgress is a tool to help you monitor the execution time of your C++ code, by
+providing a way to interrupt the execution inside the C++ code, and also to
+display a progress bar indicative of the state of your computation.
+
+Additionally, it is compatible with multithreaded code, for example using
+OpenMP, which is not as trivial as it may seem since you cannot just stop the
+execution in one thread. Also, not all threads should be writing in the console
+to avoid garbled output.
+
 
 ## Installing
 
 - from CRAN: `install.packages("RcppProgress")`
 - from github: `remotes::install_github('kforner/rcpp_progress')`
 
+## Quick try
+
+There are test functions included in `RcppProgress` that let you run some R functions calling C++ 
+code interruptible (by typing `CTRL+c`) and displaying a progress bar: 
+
+- `test_multithreaded()`
+- `test_amardillo_multithreaded()`
+- `test_eta_progress_bar()`
+
+These functions use the example R packages, included in the `RcppProgress` package 
+(check the `inst/examples` in the github repository).
+
+For example:
+```
+>RcppProgress::test_multithreaded()
+Number of threads=4
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+```
+
 ## example
-see a detailed example on Rcpp Gallery:
-http://gallery.rcpp.org/articles/using-rcppprogress/
+
+There is a detailed example on Rcpp Gallery: http://gallery.rcpp.org/articles/using-rcppprogress/.
+It has been improved an is now available as a vignette 
 
 ## How to build
 
