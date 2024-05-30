@@ -9,6 +9,7 @@
 #ifndef _RcppProgress_PROGRESS_HPP
 #define _RcppProgress_PROGRESS_HPP
 
+#include "interruptor.hpp"
 #include "interruptable_progress_monitor.hpp"
 #include "simple_progress_bar.hpp"
 
@@ -78,7 +79,7 @@ public: // ==== USER INTERFACE =====
 	 * return if the computation has been aborted.
 	 * N.B: do not perform any check by itself
 	 */
-	bool is_aborted() const { return monitor().is_aborted(); }
+	bool is_aborted() const { return interruptor_is_aborted(); }
 
 	/**
 	 * check that the no interruption has been requested and return the current status
@@ -87,7 +88,7 @@ public: // ==== USER INTERFACE =====
 	 *
 	 * @return true iff the computation is aborted
 	 */
-	static bool check_abort() { return monitor().check_abort(); }
+	static bool check_abort() { return interruptor_check_abort(); }
 
 private:
 	static InterruptableProgressMonitor*& monitor_singleton() {

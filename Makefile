@@ -22,8 +22,8 @@ coverage:
 	$(R) -e 'covr::package_coverage()'
 
 # tests require an installed package
-tests: clean rox install
-	R_LIBS=lib $(RSCRIPT) -e 'devtools::test()'
+tests: clean rox
+	$(RSCRIPT) -e 'devtools::test()'
 
 test-RcppProgressArmadillo: install
 	R CMD INSTALL inst/examples/RcppProgressArmadillo/
