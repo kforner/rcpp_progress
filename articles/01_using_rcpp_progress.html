@@ -98,7 +98,7 @@ function that you call from R using Rcpp:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span>  <span class="op">&lt;-</span> <span class="fu">long_computation</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.021   0.000   0.022</span></span></code></pre>
+<span><span class="co">##   0.021   0.000   0.021</span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 1002.32</span></span></code></pre>
@@ -130,7 +130,7 @@ interruptible (e.g. by typing CTRL+C in the classic R console).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span>  <span class="op">&lt;-</span> <span class="fu">long_computation_interruptible</span><span class="op">(</span><span class="fl">3000</span><span class="op">)</span><span class="op">)</span> <span class="co"># interrupt me</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.186   0.000   0.185</span></span></code></pre>
+<span><span class="co">##   0.185   0.000   0.184</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 3002.32</span></span></code></pre>
@@ -166,7 +166,7 @@ every second.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span>  <span class="op">&lt;-</span> <span class="fu">long_computation_progress</span><span class="op">(</span><span class="fl">3000</span><span class="op">)</span><span class="op">)</span> <span class="co"># interrupt me</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##    0.23    0.00    0.23</span></span></code></pre>
+<span><span class="co">##   0.229   0.000   0.229</span></span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 3002.32</span></span></code></pre>
@@ -212,14 +212,14 @@ computer) than the call with one single thread:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res4</span> <span class="op">&lt;-</span> <span class="fu">long_computation_omp</span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.769   0.000   0.194</span></span></code></pre>
+<span><span class="co">##   0.767   0.000   0.195</span></span></code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res4</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 5001.587</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 5001.253</span></span></code></pre>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res1</span> <span class="op">&lt;-</span> <span class="fu">long_computation_omp</span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.532   0.000   0.533</span></span></code></pre>
+<span><span class="co">##   0.533   0.000   0.533</span></span></code></pre>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 5002.32</span></span></code></pre>
