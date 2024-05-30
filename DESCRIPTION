@@ -14,9 +14,13 @@ BugReports: https://github.com/kforner/rcpp_progress/issues
 Version: 0.4.2
 Date: 2020-02-06
 Suggests:
-	RcppArmadillo,
 	devtools,
+  knitr,
+  Rcpp,
+  RcppArmadillo,
+  rmarkdown,
 	roxygen2,
 	testthat
 RoxygenNote: 7.3.1
 Encoding: UTF-8
+VignetteBuilder: knitr

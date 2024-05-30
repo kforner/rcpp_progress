@@ -9,9 +9,10 @@ test_multithreaded(max = 100, nb = 1000, threads = 0, display_progress = TRUE)
 \arguments{
 \item{max}{the number of loops/increments to execute}
 
-\item{nb}{a parameter controlling the number of computations executed in each loop}
+\item{nb}{a parameter controlling the number of computations executed in each loop, so the time 
+complexity is quadratic in this parameter}
 
-\item{threads}{the number of OMP threads to use. If < 0, runs in sequential mode.}
+\item{threads}{the number of OMP threads to use for the computation. If < 0, runs in sequential mode.}
 
 \item{display_progress}{whether to display the progress bar}
 }

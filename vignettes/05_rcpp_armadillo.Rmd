@@ -1,0 +1,24 @@
+---
+title: Using RcppProgress with RcppArmadillo
+output: rmarkdown::html_vignette
+toc: true
+vignette: >
+  %\VignetteIndexEntry{Using RcppProgress with RcppArmadillo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+
+---
+
+**RcppArmadillo** is a R package providing support for the **Armadillo** templated C++ linear algebra library.
+
+We provide the **RcppProgressArmadillo** example package along with this package 
+(https://github.com/kforner/rcpp_progress/tree/36-add-a-vignette-from-the-rcpp-gallery/inst/examples/RcppProgressArmadillo), 
+that can also be found in the  `examples/RcppProgressArmadillo` directory of installed package.
+
+You can use the [test_amardillo_multithreaded](../reference/test_amardillo_multithreaded.html) R function 
+to easily compile, run and test it.
+
+
+The peculiarity is that you have to include the `RcppArmadillo.h` header before the
+`progress.hpp` RcppProgress header, and add **RcppArmadillo** in the `LinkingTo:`
+field of the package `DESCRIPTION` file.

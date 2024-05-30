@@ -26,9 +26,10 @@ test_sequential <- function(max = 100, nb = 1000, display_progress = TRUE) {
 
 #' runs the multithreaded test from the RcppProgressExample example R package
 #' @param max   the number of loops/increments to execute
-#' @param nb    a parameter controlling the number of computations executed in each loop
+#' @param nb    a parameter controlling the number of computations executed in each loop, so the time 
+#'              complexity is quadratic in this parameter
 #' @param display_progress  whether to display the progress bar
-#' @param threads the number of OMP threads to use. If < 0, runs in sequential mode.
+#' @param threads the number of OMP threads to use for the computation. If < 0, runs in sequential mode.
 #' @return the computed number, or -1 if the computation was aborted
 #' @export
 test_multithreaded <- function(max = 100, nb = 1000, threads = 0, display_progress = TRUE)

@@ -5,7 +5,7 @@ RCHECKER=rcpp-rdevel
 NCPUS=4
 
 
-.PHONY: tests
+.PHONY: tests vignettes
 
 clean:
 	rm -f  src/*.o src/*.so */*~ *~ src/*.rds manual.pdf
@@ -58,6 +58,9 @@ doc:
 
 pkgdown: rox
 	Rscript --no-save -e 'pkgdown::build_site()'
+
+vignettes:
+	Rscript --no-save -e 'devtools::build_vignettes()'
 
 ################## docker checker ##################################
 # directory in which the local dir is mounted inside the container
