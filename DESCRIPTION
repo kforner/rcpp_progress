@@ -16,6 +16,7 @@ Date: 2020-02-06
 Suggests:
 	devtools,
   knitr,
+  Rcpp,
   RcppArmadillo,
   rmarkdown,
 	roxygen2,

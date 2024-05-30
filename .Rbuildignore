@@ -1,4 +1,5 @@
-NEWS.md
+\.md$
+\.yml$
 Makefile
 ^test_rcpp.*\.R$
 \.tar.gz$
@@ -15,3 +16,6 @@ manual.pdf
 ^doc$
 ^Meta$
 ^docs$
+
+^inst/doc/.*[.]Rmd$
+
