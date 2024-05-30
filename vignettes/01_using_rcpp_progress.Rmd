@@ -1,9 +1,9 @@
 ---
-title: Using RcppProgress to control the long computations in C++
+title: Using RcppProgress
 output: rmarkdown::html_vignette
 toc: true
 vignette: >
-  %\VignetteIndexEntry{why would you need srcpkgs?}
+  %\VignetteIndexEntry{Using RcppProgress}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 

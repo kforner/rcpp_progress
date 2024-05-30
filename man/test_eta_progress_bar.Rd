@@ -9,7 +9,8 @@ test_eta_progress_bar(max = 100, nb = 1000, display_progress = TRUE)
 \arguments{
 \item{max}{the number of loops/increments to execute}
 
-\item{nb}{a parameter controlling the number of computations executed in each loop}
+\item{nb}{a parameter controlling the number of computations executed in each loop, so the time 
+complexity is quadratic in this parameter}
 
 \item{display_progress}{whether to display the progress bar}
 }

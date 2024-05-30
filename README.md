@@ -9,11 +9,11 @@ RcppProgress
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RcppProgress)](https://cran.r-project.org/package=RcppProgress)
 <!-- badges: end -->
 
-a R package that provides a C++ interruptible progress bar with OpenMP support for C++ code in R packages:
+a R package that provides a C++ interruptible progress bar with **OpenMP** support for C++ code in R packages:
 
-- check for user interrupts in your C++ code
-- display a progress bar monitoring your C++ computation
-- compatible with multi-threaded C++ code (e.g. [openMP](https://www.openmp.org/))
+- can check for user interrupts in your C++ code
+- can display a progress bar monitoring your C++ computation
+- is compatible with multi-threaded C++ code (e.g. [openMP](https://www.openmp.org/))
 
 ## Overview
 
@@ -23,11 +23,11 @@ difficult to anticipate the execution time of your computation, so that you
 do not know if you have to wait for one minute or several hours.
 
 RcppProgress is a tool to help you monitor the execution time of your C++ code, by
-providing a way to interrupt the execution inside the C++ code, and also to
-display a progress bar indicative of the state of your computation.
+providing a way to **interrupt** the execution inside the C++ code, and also to
+display a **progress bar** indicative of the state of your computation.
 
 Additionally, it is compatible with multithreaded code, for example using
-OpenMP, which is not as trivial as it may seem since you cannot just stop the
+**OpenMP**, which is not as trivial as it may seem since you cannot just stop the
 execution in one thread. Also, not all threads should be writing in the console
 to avoid garbled output.
 
@@ -39,14 +39,14 @@ to avoid garbled output.
 
 ## Quick try
 
-There are test functions included in `RcppProgress` that let you run some R functions calling C++ 
-code interruptible (by typing `CTRL+c`) and displaying a progress bar: 
+There are test functions included in `RcppProgress` for convenience, that let you run some R functions calling C++ 
+code,  interruptible (by typing `CTRL+c`) and displaying a progress bar: 
 
 - `test_multithreaded()`
 - `test_amardillo_multithreaded()`
 - `test_eta_progress_bar()`
 
-These functions use the example R packages, included in the `RcppProgress` package 
+These functions use the example R packages included in the `RcppProgress` package 
 (check the `inst/examples` in the github repository).
 
 For example:
@@ -58,69 +58,61 @@ Number of threads=4
 **************************************************|
 ```
 
+## Inline demo
+
+You can also test a complete example entirely in your R console!
+
+```r
+# our C++ code
+CODE <- r"(
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
+
+// [[Rcpp::export]]
+double long_computation_omp_progress(int nb, int threads=1) {
+#ifdef _OPENMP
+    if ( threads > 0 )
+        omp_set_num_threads( threads );
+#endif
+    Progress p(nb, true);
+    double sum = 0;
+#pragma omp parallel for schedule(dynamic)   
+    for (int i = 0; i < nb; ++i) {
+        double thread_sum = 0;
+        if ( ! Progress::check_abort() ) {
+            p.increment(); // update progress
+            for (int j = 0; j < nb; ++j) {
+                thread_sum += R::dlnorm(i+j, 0.0, 1.0, 0);
+            }
+        }
+        sum += thread_sum;
+    }
+  
+    return sum + nb;
+}
+)"
+
+# compile and run it
+Rcpp::sourceCpp(code = CODE)
+res <- long_computation_omp_progress(10000, 4)
+
+```
+
 ## example
 
 There is a detailed example on Rcpp Gallery: http://gallery.rcpp.org/articles/using-rcppprogress/.
 It has been improved an is now available as a vignette 
-
-## How to build
-
-Prerequisites:
-
-- OpenMP support to use the multithreaded parallelized version. OpenMP is available in GCC >= 4.2
-
-Just install it the usual way.
-
-If you want more control, unarchive it, cd to the source directory, then type
-R CMD INSTALL . in the console.
+TODO: insert link
 
 ## Feedback
 
 Please use github issues to provide feedback, report bugs and propose new features.
 
-## Contribute
+## Development
 
-Contributions are welcome!
-The proposed process is:
-
-- open an issue and propose your changes
-- fork the project
-- do a merge request
-- code review
-- merge into master
-
-New code must be tested and documented, and also come with an example.
-
-
-## For developers
-
-### tests and check
-
-If you have all the RcppProgress dependencies (and suggests) installed:
-
-type:
- - `make tests`: to run the tests
- - `make check`: to check the package
-
-### docker-checker
-
-A Dockerfile (<docker_checker/Dockerfile>) is provided to help building the
-dev environment (built on rocker/r-devel) in which to develop
-and test RcppProgress.
-
-type:
-
- - `make docker/build`: to build the docker
- - `make docker/run`: to run a shell in the docker with the current dir mounted
- 	inside
- - `make docker/check`: to check the package inside the docker
- - `make docker/tests`: to run test tests of the package inside the docker
-
-### test on windows using rhub
-
-```
-make docker/run
-make check_rhub_windows
-```
-
-
+cf [here](dev.md)
