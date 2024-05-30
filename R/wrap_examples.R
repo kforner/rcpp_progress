@@ -1,6 +1,6 @@
 
 # load an example package (from inst/examples/)
-load_my_example_pkg <- function(pkg, recompile = FALSE, ...) {
+load_my_example_pkg <- function(pkg, recompile = FALSE, quiet = TRUE, ...) {
   if (!requireNamespace("devtools", quietly = TRUE)) {
     stop("Package devtools must be installed to run unit tests.", call. = FALSE)
   }

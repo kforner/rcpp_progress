@@ -12,13 +12,10 @@
 #ifndef _RcppProgress_INTERRUPTABLE_PROGRESS_MONITOR_HPP
 #define _RcppProgress_INTERRUPTABLE_PROGRESS_MONITOR_HPP
 
-#include "interrupts.hpp"
+#include "openmp_utils.hpp"
+#include "interruptor.hpp"
 #include "progress_bar.hpp"
-//#include "fetch_raw_gwas_bar.hpp"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 class InterruptableProgressMonitor {
 public: // ====== LIFECYCLE =====
@@ -50,7 +47,7 @@ public: // ===== ACCESSORS/SETTERS =====
 	void set_display_status(bool on) { _display_progress = on; 	}
 	bool is_display_on() const { return _display_progress; }
 	unsigned long get_max() const { return _max; }
-	bool is_aborted() const { return _abort; }
+	bool is_aborted() const { return interruptor_is_aborted(); }
 
 
 public: // ===== PBLIC MAIN INTERFACE =====
@@ -66,7 +63,7 @@ public: // ===== PBLIC MAIN INTERFACE =====
 	bool increment(unsigned long amount=1) {
 		if ( is_aborted() )
 			return false;
-		return is_master() ? update_master(_current + amount) : atomic_increment(amount);
+		return openmp_is_master() ? update_master(_current + amount) : atomic_increment(amount);
 	}
 
 	/**
@@ -92,25 +89,9 @@ public: // ===== PBLIC MAIN INTERFACE =====
 	 * @return true iff the computation is aborted
 	 */
 	bool check_abort() {
-		if ( is_aborted() )
-			return true;
-
-		if ( is_master() )  {
-			check_user_interrupt_master();
-		}
-		return is_aborted();
+    return interruptor_check_abort();
 	}
 
-	/**
-	 * request computation abortion
-	 */
-	void abort() {
-#ifdef _OPENMP
-#pragma omp critical
-#endif
-		_abort = true;
-
-	}
 
 	/**
 	 * return true iff the thread is the master.
@@ -138,12 +119,6 @@ public: // ===== methods for MASTER thread =====
 		_current = current;
 		if (is_display_on()) _progress_bar.update(progress(current));
 		return ! is_aborted();
-	}
-
-	void check_user_interrupt_master() {
-		if ( !is_aborted() && checkInterrupt() ) {
-			abort();
-		}
 	}
 
 public: // ===== methods for non-MASTER threads =====
@@ -185,18 +160,15 @@ protected: // ==== other instance methods =====
 			_max = 1;
 		_current = 0;
 		_display_progress = display_progress;
-		_abort = false;
-	}
 
+    interruptor_is_aborted() = false;
+	}
 
 private: // ===== INSTANCE VARIABLES ====
   ProgressBar& _progress_bar;
 	unsigned long _max; 			// the nb of tasks to perform
 	unsigned long _current; 		// the current nb of tasks performed
-
-	bool _abort;					// whether the process should abort
 	bool _display_progress;			// whether to display the progress bar
-
 };
 
 #endif

@@ -48,7 +48,6 @@ classic R console).
 // [[Rcpp::export]]
 double long_computation_interruptible(int nb) {
     double sum = 0;
-    Progress p(0, false); // we need an instance, should be improved in next version
     for (int i = 0; i < nb; ++i) {
         if (Progress::check_abort() )
             return -1.0;
