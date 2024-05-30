@@ -38,6 +38,13 @@
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/01_using_rcpp_progress.html">Using RcppProgress</a>
+    <a class="dropdown-item" href="articles/05_rcpp_armadillo.html">Using RcppProgress with RcppArmadillo</a>
+  </div>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
@@ -65,12 +72,19 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>a R package that provides a c++ interruptible progress bar with OpenMP support for c++ code in R packages:</p>
+<p>a R package that provides a C++ interruptible progress bar with <strong>OpenMP</strong> support for C++ code in R packages:</p>
 <ul>
-<li>check for user interrupts in your c++ code</li>
-<li>display a progress bar monitoring your c++ computation</li>
-<li>compatible with multi-threaded c++ code (e.g. openMP)</li>
+<li>can check for user interrupts in your C++ code</li>
+<li>can display a progress bar monitoring your C++ computation</li>
+<li>is compatible with multi-threaded C++ code (e.g. <a href="https://www.openmp.org/" class="external-link">openMP</a>)</li>
 </ul>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>Usually you write C++ code with R when you want to speedup some calculations. Depending on the parameters, and especially during the development, it is difficult to anticipate the execution time of your computation, so that you do not know if you have to wait for one minute or several hours.</p>
+<p>RcppProgress is a tool to help you monitor the execution time of your C++ code, by providing a way to <strong>interrupt</strong> the execution inside the C++ code, and also to display a <strong>progress bar</strong> indicative of the state of your computation.</p>
+<p>Additionally, it is compatible with multithreaded code, for example using <strong>OpenMP</strong>, which is not as trivial as it may seem since you cannot just stop the execution in one thread. Also, not all threads should be writing in the console to avoid garbled output.</p>
+</div>
 <div class="section level2">
 <h2 id="installing">Installing<a class="anchor" aria-label="anchor" href="#installing"></a>
 </h2>
@@ -82,19 +96,69 @@
 </ul>
 </div>
 <div class="section level2">
-<h2 id="example">example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="quick-try">Quick try<a class="anchor" aria-label="anchor" href="#quick-try"></a>
 </h2>
-<p>see a detailed example on Rcpp Gallery: <a href="http://gallery.rcpp.org/articles/using-rcppprogress/" class="external-link uri">http://gallery.rcpp.org/articles/using-rcppprogress/</a></p>
+<p>There are test functions included in <code>RcppProgress</code> for convenience, that let you run some R functions calling C++ code, interruptible (by typing <code>CTRL+c</code>) and displaying a progress bar:</p>
+<ul>
+<li><code><a href="reference/test_multithreaded.html">test_multithreaded()</a></code></li>
+<li><code><a href="reference/test_amardillo_multithreaded.html">test_amardillo_multithreaded()</a></code></li>
+<li><code><a href="reference/test_eta_progress_bar.html">test_eta_progress_bar()</a></code></li>
+</ul>
+<p>These functions use the example R packages included in the <code>RcppProgress</code> package (check the <code>inst/examples</code> in the github repository).</p>
+<p>For example:</p>
+<pre><code>&gt;RcppProgress::test_multithreaded()
+Number of threads=4
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|</code></pre>
 </div>
 <div class="section level2">
-<h2 id="how-to-build">How to build<a class="anchor" aria-label="anchor" href="#how-to-build"></a>
+<h2 id="inline-demo">Inline demo<a class="anchor" aria-label="anchor" href="#inline-demo"></a>
 </h2>
-<p>Prerequisites:</p>
-<ul>
-<li>OpenMP support to use the multithreaded parallelized version. OpenMP is available in GCC &gt;= 4.2</li>
-</ul>
-<p>Just install it the usual way.</p>
-<p>If you want more control, unarchive it, cd to the source directory, then type R CMD INSTALL . in the console.</p>
+<p>You can also test a complete example entirely in your R console!</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># our C++ code</span></span>
+<span><span class="va">CODE</span> <span class="op">&lt;-</span> <span class="st">r"(</span></span>
+<span><span class="st">#ifdef _OPENMP</span></span>
+<span><span class="st">#include &lt;omp.h&gt;</span></span>
+<span><span class="st">#endif</span></span>
+<span><span class="st">// [[Rcpp::plugins(openmp)]]</span></span>
+<span><span class="st">// [[Rcpp::depends(RcppProgress)]]</span></span>
+<span><span class="st">#include &lt;progress.hpp&gt;</span></span>
+<span><span class="st">#include &lt;progress_bar.hpp&gt;</span></span>
+<span><span class="st"></span></span>
+<span><span class="st">// [[Rcpp::export]]</span></span>
+<span><span class="st">double long_computation_omp_progress(int nb, int threads=1) {</span></span>
+<span><span class="st">#ifdef _OPENMP</span></span>
+<span><span class="st">    if ( threads &gt; 0 )</span></span>
+<span><span class="st">        omp_set_num_threads( threads );</span></span>
+<span><span class="st">#endif</span></span>
+<span><span class="st">    Progress p(nb, true);</span></span>
+<span><span class="st">    double sum = 0;</span></span>
+<span><span class="st">#pragma omp parallel for schedule(dynamic)   </span></span>
+<span><span class="st">    for (int i = 0; i &lt; nb; ++i) {</span></span>
+<span><span class="st">        double thread_sum = 0;</span></span>
+<span><span class="st">        if ( ! Progress::check_abort() ) {</span></span>
+<span><span class="st">            p.increment(); // update progress</span></span>
+<span><span class="st">            for (int j = 0; j &lt; nb; ++j) {</span></span>
+<span><span class="st">                thread_sum += R::dlnorm(i+j, 0.0, 1.0, 0);</span></span>
+<span><span class="st">            }</span></span>
+<span><span class="st">        }</span></span>
+<span><span class="st">        sum += thread_sum;</span></span>
+<span><span class="st">    }</span></span>
+<span><span class="st">  </span></span>
+<span><span class="st">    return sum + nb;</span></span>
+<span><span class="st">}</span></span>
+<span><span class="st">)"</span></span>
+<span></span>
+<span><span class="co"># compile and run it</span></span>
+<span><span class="fu">Rcpp</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rcpp/man/sourceCpp.html" class="external-link">sourceCpp</a></span><span class="op">(</span>code <span class="op">=</span> <span class="va">CODE</span><span class="op">)</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">long_computation_omp_progress</span><span class="op">(</span><span class="fl">10000</span>, <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="example">example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h2>
+<p>There is a detailed example on Rcpp Gallery: <a href="http://gallery.rcpp.org/articles/using-rcppprogress/" class="external-link uri">http://gallery.rcpp.org/articles/using-rcppprogress/</a>. It has been improved an is now available as a vignette TODO: insert link</p>
 </div>
 <div class="section level2">
 <h2 id="feedback">Feedback<a class="anchor" aria-label="anchor" href="#feedback"></a>
@@ -102,49 +166,9 @@
 <p>Please use github issues to provide feedback, report bugs and propose new features.</p>
 </div>
 <div class="section level2">
-<h2 id="contribute">Contribute<a class="anchor" aria-label="anchor" href="#contribute"></a>
+<h2 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
 </h2>
-<p>Contributions are welcome! The proposed process is:</p>
-<ul>
-<li>open an issue and propose your changes</li>
-<li>fork the project</li>
-<li>do a merge request</li>
-<li>code review</li>
-<li>merge into master</li>
-</ul>
-<p>New code must be tested and documented, and also come with an example.</p>
-</div>
-<div class="section level2">
-<h2 id="for-developers">For developers<a class="anchor" aria-label="anchor" href="#for-developers"></a>
-</h2>
-<div class="section level3">
-<h3 id="tests-and-check">tests and check<a class="anchor" aria-label="anchor" href="#tests-and-check"></a>
-</h3>
-<p>If you have all the RcppProgress dependencies (and suggests) installed:</p>
-<p>type: - <code>make tests</code>: to run the tests - <code>make check</code>: to check the package</p>
-</div>
-<div class="section level3">
-<h3 id="docker-checker">docker-checker<a class="anchor" aria-label="anchor" href="#docker-checker"></a>
-</h3>
-<p>A Dockerfile (<docker_checker>) is provided to help building the dev environment (built on rocker/r-devel) in which to develop and test RcppProgress.</docker_checker></p>
-<p>type:</p>
-<ul>
-<li>
-<code>make docker/build</code>: to build the docker</li>
-<li>
-<code>make docker/run</code>: to run a shell in the docker with the current dir mounted inside</li>
-<li>
-<code>make docker/check</code>: to check the package inside the docker</li>
-<li>
-<code>make docker/tests</code>: to run test tests of the package inside the docker</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="test-on-windows-using-rhub">test on windows using rhub<a class="anchor" aria-label="anchor" href="#test-on-windows-using-rhub"></a>
-</h3>
-<pre><code>make docker/run
-make check_rhub_windows</code></pre>
-</div>
+<p>cf <a href="dev.html">here</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

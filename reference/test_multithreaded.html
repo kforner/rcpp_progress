@@ -21,6 +21,13 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/01_using_rcpp_progress.html">Using RcppProgress</a>
+    <a class="dropdown-item" href="../articles/05_rcpp_armadillo.html">Using RcppProgress with RcppArmadillo</a>
+  </div>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
@@ -61,11 +68,12 @@
 
 
 <dt>nb</dt>
-<dd><p>a parameter controlling the number of computations executed in each loop</p></dd>
+<dd><p>a parameter controlling the number of computations executed in each loop, so the time 
+complexity is quadratic in this parameter</p></dd>
 
 
 <dt>threads</dt>
-<dd><p>the number of OMP threads to use. If &lt; 0, runs in sequential mode.</p></dd>
+<dd><p>the number of OMP threads to use for the computation. If &lt; 0, runs in sequential mode.</p></dd>
 
 
 <dt>display_progress</dt>
