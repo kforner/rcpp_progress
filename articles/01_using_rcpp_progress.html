@@ -98,7 +98,7 @@ function that you call from R using Rcpp:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span>  <span class="op">&lt;-</span> <span class="fu">long_computation</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.021   0.000   0.022</span></span></code></pre>
+<span><span class="co">##   0.021   0.000   0.021</span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 1002.32</span></span></code></pre>
@@ -117,23 +117,22 @@ interruptible (e.g. by typing CTRL+C in the classic R console).</p>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="dt">double</span> long_computation_interruptible<span class="op">(</span><span class="dt">int</span> nb<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="dt">double</span> sum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    Progress p<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="kw">false</span><span class="op">);</span> <span class="co">// we need an instance, should be improved in next version</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> nb<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>Progress<span class="op">::</span>check_abort<span class="op">()</span> <span class="op">)</span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>            <span class="cf">return</span> <span class="op">-</span><span class="fl">1.0</span><span class="op">;</span></span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> nb<span class="op">;</span> <span class="op">++</span>j<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>        sum <span class="op">+=</span> R<span class="op">::</span>dlnorm<span class="op">(</span>i<span class="op">+</span>j<span class="op">,</span> <span class="fl">0.0</span><span class="op">,</span> <span class="fl">1.0</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> nb<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>Progress<span class="op">::</span>check_abort<span class="op">()</span> <span class="op">)</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>            <span class="cf">return</span> <span class="op">-</span><span class="fl">1.0</span><span class="op">;</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> nb<span class="op">;</span> <span class="op">++</span>j<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>        sum <span class="op">+=</span> R<span class="op">::</span>dlnorm<span class="op">(</span>i<span class="op">+</span>j<span class="op">,</span> <span class="fl">0.0</span><span class="op">,</span> <span class="fl">1.0</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>    <span class="cf">return</span> sum <span class="op">+</span> nb<span class="op">;</span></span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>    <span class="cf">return</span> sum <span class="op">+</span> nb<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span>  <span class="op">&lt;-</span> <span class="fu">long_computation_interruptible</span><span class="op">(</span><span class="fl">3000</span><span class="op">)</span><span class="op">)</span> <span class="co"># interrupt me</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.193   0.000   0.193</span></span></code></pre>
+<span><span class="co">##       0       0       0</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 3002.32</span></span></code></pre>
+<pre><code><span><span class="co">## [1] -1</span></span></code></pre>
 <p>You may wonder why we put the <code>check_abort()</code> call in the
 first loop instead that in the second. The performance cost of this call
 is not negligible. It should be put in a place called often enough (like
@@ -166,10 +165,10 @@ every second.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span>  <span class="op">&lt;-</span> <span class="fu">long_computation_progress</span><span class="op">(</span><span class="fl">3000</span><span class="op">)</span><span class="op">)</span> <span class="co"># interrupt me</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.241   0.000   0.241</span></span></code></pre>
+<span><span class="co">##   0.000   0.000   0.001</span></span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 3002.32</span></span></code></pre>
+<pre><code><span><span class="co">## [1] -1</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="openmp-support">OpenMP support<a class="anchor" aria-label="anchor" href="#openmp-support"></a>
@@ -212,14 +211,14 @@ computer) than the call with one single thread:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res4</span> <span class="op">&lt;-</span> <span class="fu">long_computation_omp</span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.772   0.000   0.195</span></span></code></pre>
+<span><span class="co">##   0.765   0.003   0.194</span></span></code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res4</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 5001.975</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 5001.588</span></span></code></pre>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res1</span> <span class="op">&lt;-</span> <span class="fu">long_computation_omp</span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.533   0.000   0.533</span></span></code></pre>
+<span><span class="co">##   0.539   0.000   0.538</span></span></code></pre>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 5002.32</span></span></code></pre>
