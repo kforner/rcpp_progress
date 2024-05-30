@@ -1,7 +1,6 @@
 For developers
 ================
 
-
 ## How to build
 
 Prerequisites:
@@ -33,6 +32,14 @@ New code must be tested and documented, and also come with an example.
 
 ## For developers
 
+## VS Code devcontainer
+
+This repository has a devcontainer configured. So that if you open it in vscode, 
+it will prompt you to reopen it in the container. From that you do not need to install anything, 
+and you can directly run make tests/check/...
+You can also run the project inside github codespaces, that will use the devcontainer.
+
+
 ### tests and check
 
 If you have all the RcppProgress dependencies (and suggests) installed:
@@ -42,6 +49,8 @@ type:
  - `make check`: to check the package
 
 ### docker-checker
+
+N.B: this is somewhat deprecated by the vscode devcontainer (see above).
 
 A Dockerfile (<docker_checker/Dockerfile>) is provided to help building the
 dev environment (built on rocker/r-devel) in which to develop
