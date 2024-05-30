@@ -6,7 +6,7 @@ Type: Package
 LazyLoad: yes
 Author: Karl Forner <karl.forner@gmail.com>
 Description: Allows to display a progress bar in the R
-    console for long running computations taking place in c++ code,
+    console for long running computations taking place in C++ code,
     and support for interrupting those computations even in multithreaded
     code, typically using OpenMP.
 URL: https://github.com/kforner/rcpp_progress

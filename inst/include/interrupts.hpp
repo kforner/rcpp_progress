@@ -7,7 +7,7 @@
  * The mail is dated: 25 april 2011
  *
  * It allows to check for user interruption without
- * leaving the c++ function that calls it.
+ * leaving the C++ function that calls it.
  *
  * Potential drawbacks according to its author:
  * The problem with it is that it will eat all errors, even if they were not yours
