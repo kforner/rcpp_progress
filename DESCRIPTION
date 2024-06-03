@@ -11,8 +11,8 @@ Description: Allows to display a progress bar in the R
     code, typically using OpenMP.
 URL: https://github.com/kforner/rcpp_progress
 BugReports: https://github.com/kforner/rcpp_progress/issues
-Version: 0.4.2
-Date: 2020-02-06
+Version: 1.0.0
+Date: 2024-06-03
 Suggests:
 	devtools,
   knitr,
