@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">RcppProgress</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,21 @@
       <small>Source: <a href="https://github.com/kforner/rcpp_progress/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.0" id="rcppprogress-100">RcppProgress 1.0.0<a class="anchor" aria-label="anchor" href="#rcppprogress-100"></a></h2>
+<ul><li>fixed issue <a href="https://github.com/kforner/rcpp_progress/issues/38" class="external-link">#38</a>: Progress::check_abort() crashes in no Progress instance has been created</li>
+<li>added back and exported the test functions, allowing to easily test the included example packages (cf <a href="http://kforner.github.io/rcpp_progress/reference/test_multithreaded.html" class="external-link uri">http://kforner.github.io/rcpp_progress/reference/test_multithreaded.html</a> for instance)</li>
+<li>modernized the github repository
+<ul><li>now using vscode <strong>devcontainer</strong>
+</li>
+<li>using <strong>pkgdown</strong> and deploying doc to <a href="http://kforner.github.io/rcpp_progress/" class="external-link uri">http://kforner.github.io/rcpp_progress/</a>
+</li>
+<li>configured test coverage reporting using *codecov**</li>
+<li>now using roxygen2</li>
+<li>added CI github actions to test the package on multiple architectures and OSes (except on Macos for now), report the test coverage and deploy the documentation</li>
+</ul></li>
+<li>refreshed the documentation, the README, added vignette from the RcppGallery, and added a short vignette for RcppArmadillo</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.2" id="rcppprogress-042">RcppProgress 0.4.2<a class="anchor" aria-label="anchor" href="#rcppprogress-042"></a></h2><p class="text-muted">CRAN release: 2020-02-06</p>
 <ul><li>the constructor now clears out any existing Progress instance. That fixes some problems with recent versions of R that seem able sometimes to intercept the interrupt at the R level, cf <a href="https://github.com/kforner/rcpp_progress/issues/4" class="external-link uri">https://github.com/kforner/rcpp_progress/issues/4</a>
