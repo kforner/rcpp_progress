@@ -12,7 +12,7 @@ vignette: >
 **RcppArmadillo** is a R package providing support for the **Armadillo** templated C++ linear algebra library.
 
 We provide the **RcppProgressArmadillo** example package along with this package 
-(https://github.com/kforner/rcpp_progress/tree/36-add-a-vignette-from-the-rcpp-gallery/inst/examples/RcppProgressArmadillo), 
+(https://github.com/kforner/rcpp_progress/tree/master/inst/examples/RcppProgressArmadillo), 
 that can also be found in the  `examples/RcppProgressArmadillo` directory of installed package.
 
 You can use the [test_amardillo_multithreaded](../reference/test_amardillo_multithreaded.html) R function 
